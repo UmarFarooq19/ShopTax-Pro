@@ -50,18 +50,11 @@ export default function RegisterPage() {
             // Send email verification
             await sendEmailVerification(userCredential.user)
 
-            toast({
-                title: "Success",
-                description: "Account created successfully! Please check your email for verification.",
-            })
+            toast("Account created successfully! Please check your email for verification.")
 
             router.push("/auth/login")
-        } catch (error: any) {
-            toast({
-                title: "Error",
-                description: error.message,
-                variant: "destructive",
-            })
+        } catch (error) {
+            if (error instanceof Error) toast(error.message)
         } finally {
             setLoading(false)
         }
