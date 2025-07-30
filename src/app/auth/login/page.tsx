@@ -25,10 +25,10 @@ export default function LoginPage() {
 
         try {
             await signInWithEmailAndPassword(auth, email, password)
-            toast.success("Success")
+            toast.success("Logged in successfully")
             router.push("/")
-        } catch (error: any) {
-            toast("Error")
+        } catch (error) {
+            if (error instanceof Error) toast.error(error.message)
         } finally {
             setLoading(false)
         }

@@ -12,8 +12,8 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { useToast } from "@/hooks/use-toast"
 import Link from "next/link"
+import { toast } from "sonner"
 
 export default function RegisterPage() {
     const [formData, setFormData] = useState({
@@ -25,17 +25,12 @@ export default function RegisterPage() {
     })
     const [loading, setLoading] = useState(false)
     const router = useRouter()
-    const { toast } = useToast()
 
     const handleRegister = async (e: React.FormEvent) => {
         e.preventDefault()
 
         if (formData.password !== formData.confirmPassword) {
-            toast({
-                title: "Error",
-                description: "Passwords do not match",
-                variant: "destructive",
-            })
+            toast.error("Passwords do not match")
             return
         }
 
