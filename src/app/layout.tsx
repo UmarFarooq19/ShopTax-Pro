@@ -31,7 +31,17 @@ export default function RootLayout({
       >
         <AuthProvider>
           {children}
-          <Toaster />
+          <Toaster
+            position="top-right"
+            richColors
+            closeButton
+            toastOptions={{
+              style: {
+                background: 'white',
+                border: '1px solid #e2e8f0',
+                color: '#1e293b',
+              },
+            }} />
         </AuthProvider>
       </body>
     </html>
