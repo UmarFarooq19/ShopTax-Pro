@@ -12,10 +12,11 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import Link from "next/link"
 import { toast } from "sonner"
+import Link from "next/link"
+import { Building2, Globe, MapPin } from 'lucide-react'
 
-// Popular countries with their coordinates
+// Countries with their coordinates
 const countries = [
     { name: "Pakistan", code: "PK", lat: 30.3753, lng: 69.3451 },
     { name: "India", code: "IN", lat: 20.5937, lng: 78.9629 },
@@ -39,39 +40,39 @@ const countries = [
     { name: "Indonesia", code: "ID", lat: -0.7893, lng: 113.9213 },
 ]
 
-// Major cities for Pakistan (you can expand this for other countries)
-const pakistanCities = [
-    { name: "Karachi", lat: 24.8607, lng: 67.0011 },
-    { name: "Lahore", lat: 31.5204, lng: 74.3587 },
-    { name: "Islamabad", lat: 33.6844, lng: 73.0479 },
-    { name: "Rawalpindi", lat: 33.5651, lng: 73.0169 },
-    { name: "Faisalabad", lat: 31.4504, lng: 73.1350 },
-    { name: "Multan", lat: 30.1575, lng: 71.5249 },
-    { name: "Peshawar", lat: 34.0151, lng: 71.5249 },
-    { name: "Quetta", lat: 30.1798, lng: 66.9750 },
-    { name: "Sialkot", lat: 32.4945, lng: 74.5229 },
-    { name: "Gujranwala", lat: 32.1877, lng: 74.1945 },
-]
-
-const indiaCities = [
-    { name: "Mumbai", lat: 19.0760, lng: 72.8777 },
-    { name: "Delhi", lat: 28.7041, lng: 77.1025 },
-    { name: "Bangalore", lat: 12.9716, lng: 77.5946 },
-    { name: "Hyderabad", lat: 17.3850, lng: 78.4867 },
-    { name: "Chennai", lat: 13.0827, lng: 80.2707 },
-    { name: "Kolkata", lat: 22.5726, lng: 88.3639 },
-    { name: "Pune", lat: 18.5204, lng: 73.8567 },
-    { name: "Ahmedabad", lat: 23.0225, lng: 72.5714 },
-]
-
-const usCities = [
-    { name: "New York", lat: 40.7128, lng: -74.0060 },
-    { name: "Los Angeles", lat: 34.0522, lng: -118.2437 },
-    { name: "Chicago", lat: 41.8781, lng: -87.6298 },
-    { name: "Houston", lat: 29.7604, lng: -95.3698 },
-    { name: "Phoenix", lat: 33.4484, lng: -112.0740 },
-    { name: "Philadelphia", lat: 39.9526, lng: -75.1652 },
-]
+// Major cities for different countries
+const citiesByCountry: { [key: string]: Array<{ name: string, lat: number, lng: number }> } = {
+    PK: [
+        { name: "Karachi", lat: 24.8607, lng: 67.0011 },
+        { name: "Lahore", lat: 31.5204, lng: 74.3587 },
+        { name: "Islamabad", lat: 33.6844, lng: 73.0479 },
+        { name: "Rawalpindi", lat: 33.5651, lng: 73.0169 },
+        { name: "Faisalabad", lat: 31.4504, lng: 73.1350 },
+        { name: "Multan", lat: 30.1575, lng: 71.5249 },
+        { name: "Peshawar", lat: 34.0151, lng: 71.5249 },
+        { name: "Quetta", lat: 30.1798, lng: 66.9750 },
+        { name: "Sialkot", lat: 32.4945, lng: 74.5229 },
+        { name: "Gujranwala", lat: 32.1877, lng: 74.1945 },
+    ],
+    IN: [
+        { name: "Mumbai", lat: 19.0760, lng: 72.8777 },
+        { name: "Delhi", lat: 28.7041, lng: 77.1025 },
+        { name: "Bangalore", lat: 12.9716, lng: 77.5946 },
+        { name: "Hyderabad", lat: 17.3850, lng: 78.4867 },
+        { name: "Chennai", lat: 13.0827, lng: 80.2707 },
+        { name: "Kolkata", lat: 22.5726, lng: 88.3639 },
+        { name: "Pune", lat: 18.5204, lng: 73.8567 },
+        { name: "Ahmedabad", lat: 23.0225, lng: 72.5714 },
+    ],
+    US: [
+        { name: "New York", lat: 40.7128, lng: -74.0060 },
+        { name: "Los Angeles", lat: 34.0522, lng: -118.2437 },
+        { name: "Chicago", lat: 41.8781, lng: -87.6298 },
+        { name: "Houston", lat: 29.7604, lng: -95.3698 },
+        { name: "Phoenix", lat: 33.4484, lng: -112.0740 },
+        { name: "Philadelphia", lat: 39.9526, lng: -75.1652 },
+    ],
+}
 
 export default function RegisterPage() {
     const [formData, setFormData] = useState({
@@ -79,7 +80,6 @@ export default function RegisterPage() {
         password: "",
         confirmPassword: "",
         fullName: "",
-        role: "shop_owner",
         country: "",
         city: "",
     })
@@ -89,21 +89,7 @@ export default function RegisterPage() {
 
     const handleCountryChange = (countryCode: string) => {
         setFormData({ ...formData, country: countryCode, city: "" })
-
-        // Set available cities based on selected country
-        switch (countryCode) {
-            case "PK":
-                setAvailableCities(pakistanCities)
-                break
-            case "IN":
-                setAvailableCities(indiaCities)
-                break
-            case "US":
-                setAvailableCities(usCities)
-                break
-            default:
-                setAvailableCities([])
-        }
+        setAvailableCities(citiesByCountry[countryCode] || [])
     }
 
     const handleRegister = async (e: React.FormEvent) => {
@@ -119,6 +105,11 @@ export default function RegisterPage() {
             return
         }
 
+        if (formData.password.length < 6) {
+            toast.error("Password must be at least 6 characters long")
+            return
+        }
+
         setLoading(true)
 
         try {
@@ -128,18 +119,18 @@ export default function RegisterPage() {
             const selectedCountry = countries.find(c => c.code === formData.country)
             const selectedCity = availableCities.find(c => c.name === formData.city)
 
-            // Save user data to Firestore
+            // Save user data to Firestore with default role as shop_owner
             await setDoc(doc(db, "users", userCredential.user.uid), {
                 email: formData.email,
                 fullName: formData.fullName,
-                role: formData.role,
+                role: "shop_owner", // Default role
                 country: formData.country,
                 countryName: selectedCountry?.name || "",
                 city: formData.city,
                 location: {
                     country: {
-                        lat: selectedCountry?.lat || 0,
-                        lng: selectedCountry?.lng || 0,
+                        lat: selectedCountry?.lat || 24.8607, // Default to Karachi
+                        lng: selectedCountry?.lng || 67.0011,
                     },
                     city: selectedCity ? {
                         lat: selectedCity.lat,
@@ -147,132 +138,155 @@ export default function RegisterPage() {
                     } : null,
                 },
                 createdAt: new Date(),
+                status: "active",
             })
 
             // Send email verification
             await sendEmailVerification(userCredential.user)
 
             toast.success("Account created successfully! Please check your email for verification.")
-
             router.push("/auth/login")
         } catch (error: any) {
-            toast.error(error.message || "Error")
+            toast.error(error.message)
         } finally {
             setLoading(false)
         }
     }
 
     return (
-        <div className="min-h-screen flex items-center justify-center bg-gray-50 px-4 py-8">
-            <Card className="w-full max-w-md">
-                <CardHeader className="text-center">
-                    <CardTitle className="text-2xl">Register for ShopTax Pro</CardTitle>
-                    <CardDescription>Create your account to get started</CardDescription>
-                </CardHeader>
-                <CardContent>
-                    <form onSubmit={handleRegister} className="space-y-4">
-                        <div className="space-y-2">
-                            <Label htmlFor="fullName">Full Name</Label>
-                            <Input
-                                id="fullName"
-                                value={formData.fullName}
-                                onChange={(e) => setFormData({ ...formData, fullName: e.target.value })}
-                                required
-                            />
+        <div className="min-h-screen gradient-bg flex items-center justify-center px-4 py-8">
+            <div className="w-full max-w-md animate-fade-in-up">
+                <Card className="shadow-2xl border-0 backdrop-blur-sm bg-white/95">
+                    <CardHeader className="text-center space-y-4 pb-8">
+                        <div className="mx-auto w-16 h-16 bg-gradient-to-br from-blue-500 to-purple-600 rounded-2xl flex items-center justify-center">
+                            <Building2 className="h-8 w-8 text-white" />
                         </div>
-
-                        <div className="space-y-2">
-                            <Label htmlFor="email">Email</Label>
-                            <Input
-                                id="email"
-                                type="email"
-                                value={formData.email}
-                                onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                                required
-                            />
+                        <div>
+                            <CardTitle className="text-3xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+                                Join ShopTax Pro
+                            </CardTitle>
+                            <CardDescription className="text-gray-600 mt-2">
+                                Create your account to start managing your business
+                            </CardDescription>
                         </div>
-
-                        <div className="space-y-2">
-                            <Label htmlFor="country">Country</Label>
-                            <Select value={formData.country} onValueChange={handleCountryChange}>
-                                <SelectTrigger>
-                                    <SelectValue placeholder="Select your country" />
-                                </SelectTrigger>
-                                <SelectContent>
-                                    {countries.map((country) => (
-                                        <SelectItem key={country.code} value={country.code}>
-                                            {country.name}
-                                        </SelectItem>
-                                    ))}
-                                </SelectContent>
-                            </Select>
-                        </div>
-
-                        {availableCities.length > 0 && (
+                    </CardHeader>
+                    <CardContent>
+                        <form onSubmit={handleRegister} className="space-y-5">
                             <div className="space-y-2">
-                                <Label htmlFor="city">City (Optional)</Label>
-                                <Select value={formData.city} onValueChange={(value) => setFormData({ ...formData, city: value })}>
-                                    <SelectTrigger>
-                                        <SelectValue placeholder="Select your city" />
+                                <Label htmlFor="fullName" className="text-sm font-semibold text-gray-700">Full Name</Label>
+                                <Input
+                                    id="fullName"
+                                    placeholder="Enter your full name"
+                                    value={formData.fullName}
+                                    onChange={(e) => setFormData({ ...formData, fullName: e.target.value })}
+                                    className="h-12 border-gray-200 focus:border-blue-500 focus:ring-blue-500"
+                                    required
+                                />
+                            </div>
+
+                            <div className="space-y-2">
+                                <Label htmlFor="email" className="text-sm font-semibold text-gray-700">Email Address</Label>
+                                <Input
+                                    id="email"
+                                    type="email"
+                                    placeholder="Enter your email"
+                                    value={formData.email}
+                                    onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                                    className="h-12 border-gray-200 focus:border-blue-500 focus:ring-blue-500"
+                                    required
+                                />
+                            </div>
+
+                            <div className="space-y-2">
+                                <Label htmlFor="country" className="text-sm font-semibold text-gray-700 flex items-center">
+                                    <Globe className="h-4 w-4 mr-1" />
+                                    Country *
+                                </Label>
+                                <Select value={formData.country} onValueChange={handleCountryChange}>
+                                    <SelectTrigger className="h-12 border-gray-200 focus:border-blue-500 focus:ring-blue-500">
+                                        <SelectValue placeholder="Select your country" />
                                     </SelectTrigger>
                                     <SelectContent>
-                                        {availableCities.map((city) => (
-                                            <SelectItem key={city.name} value={city.name}>
-                                                {city.name}
+                                        {countries.map((country) => (
+                                            <SelectItem key={country.code} value={country.code}>
+                                                {country.name}
                                             </SelectItem>
                                         ))}
                                     </SelectContent>
                                 </Select>
                             </div>
-                        )}
 
-                        <div className="space-y-2">
-                            <Label htmlFor="role">Role</Label>
-                            <Select value={formData.role} onValueChange={(value) => setFormData({ ...formData, role: value })}>
-                                <SelectTrigger>
-                                    <SelectValue />
-                                </SelectTrigger>
-                                <SelectContent>
-                                    <SelectItem value="shop_owner">Shop Owner</SelectItem>
-                                    <SelectItem value="admin">Tax Officer (Admin)</SelectItem>
-                                </SelectContent>
-                            </Select>
+                            {availableCities.length > 0 && (
+                                <div className="space-y-2">
+                                    <Label htmlFor="city" className="text-sm font-semibold text-gray-700 flex items-center">
+                                        <MapPin className="h-4 w-4 mr-1" />
+                                        City (Optional)
+                                    </Label>
+                                    <Select value={formData.city} onValueChange={(value) => setFormData({ ...formData, city: value })}>
+                                        <SelectTrigger className="h-12 border-gray-200 focus:border-blue-500 focus:ring-blue-500">
+                                            <SelectValue placeholder="Select your city" />
+                                        </SelectTrigger>
+                                        <SelectContent>
+                                            {availableCities.map((city) => (
+                                                <SelectItem key={city.name} value={city.name}>
+                                                    {city.name}
+                                                </SelectItem>
+                                            ))}
+                                        </SelectContent>
+                                    </Select>
+                                </div>
+                            )}
+
+                            <div className="space-y-2">
+                                <Label htmlFor="password" className="text-sm font-semibold text-gray-700">Password</Label>
+                                <Input
+                                    id="password"
+                                    type="password"
+                                    placeholder="Create a strong password"
+                                    value={formData.password}
+                                    onChange={(e) => setFormData({ ...formData, password: e.target.value })}
+                                    className="h-12 border-gray-200 focus:border-blue-500 focus:ring-blue-500"
+                                    required
+                                />
+                            </div>
+
+                            <div className="space-y-2">
+                                <Label htmlFor="confirmPassword" className="text-sm font-semibold text-gray-700">Confirm Password</Label>
+                                <Input
+                                    id="confirmPassword"
+                                    type="password"
+                                    placeholder="Confirm your password"
+                                    value={formData.confirmPassword}
+                                    onChange={(e) => setFormData({ ...formData, confirmPassword: e.target.value })}
+                                    className="h-12 border-gray-200 focus:border-blue-500 focus:ring-blue-500"
+                                    required
+                                />
+                            </div>
+
+                            <Button
+                                type="submit"
+                                className="w-full h-12 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-semibold rounded-xl shadow-lg hover:shadow-xl transition-all duration-200"
+                                disabled={loading}
+                            >
+                                {loading ? (
+                                    <div className="flex items-center">
+                                        <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white mr-2"></div>
+                                        Creating Account...
+                                    </div>
+                                ) : (
+                                    "Create Account"
+                                )}
+                            </Button>
+                        </form>
+                        <div className="mt-6 text-center text-sm">
+                            <span className="text-gray-600">Already have an account? </span>
+                            <Link href="/auth/login" className="text-blue-600 hover:text-blue-700 font-semibold hover:underline">
+                                Sign in here
+                            </Link>
                         </div>
-
-                        <div className="space-y-2">
-                            <Label htmlFor="password">Password</Label>
-                            <Input
-                                id="password"
-                                type="password"
-                                value={formData.password}
-                                onChange={(e) => setFormData({ ...formData, password: e.target.value })}
-                                required
-                            />
-                        </div>
-
-                        <div className="space-y-2">
-                            <Label htmlFor="confirmPassword">Confirm Password</Label>
-                            <Input
-                                id="confirmPassword"
-                                type="password"
-                                value={formData.confirmPassword}
-                                onChange={(e) => setFormData({ ...formData, confirmPassword: e.target.value })}
-                                required
-                            />
-                        </div>
-
-                        <Button type="submit" className="w-full" disabled={loading}>
-                            {loading ? "Creating Account..." : "Register"}
-                        </Button>
-                    </form>
-                    <div className="mt-4 text-center text-sm">
-                        Already have an account?{" "}
-                        <Link href="/auth/login" className="text-primary hover:underline">
-                            Login here
-                        </Link>
-                    </div>
-                </CardContent>
-            </Card>
+                    </CardContent>
+                </Card>
+            </div>
         </div>
     )
 }
