@@ -1,18 +1,77 @@
 "use client"
 
-import { useEffect, useRef, useState } from "react"
+import { useEffect, useState } from "react"
+import { MapContainer, TileLayer, Marker, Popup, useMapEvents } from "react-leaflet"
+import L from "leaflet"
+import "leaflet/dist/leaflet.css"
+
+// Fix for default markers in Leaflet
+delete (L.Icon.Default.prototype as any)._getIconUrl
+L.Icon.Default.mergeOptions({
+  iconRetinaUrl: "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon-2x.png",
+  iconUrl: "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon.png",
+  shadowUrl: "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png",
+})
+
+// Create custom icons for tax status
+const createCustomIcon = (color: string) => {
+  return L.divIcon({
+    className: "custom-div-icon",
+    html: `
+      <div style="
+        width: 24px;
+        height: 24px;
+        border-radius: 50%;
+        background-color: ${color};
+        border: 3px solid white;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+      "></div>
+    `,
+    iconSize: [24, 24],
+    iconAnchor: [12, 12],
+  })
+}
+
+const greenIcon = createCustomIcon("#10b981") // green-500
+const redIcon = createCustomIcon("#ef4444") // red-500
+
+interface Shop {
+  id: string
+  shopName: string
+  location: { lat: number; lng: number }
+  taxStatus: "paid" | "unpaid"
+  ownerName?: string
+  address?: string
+}
 
 interface MapComponentProps {
   onLocationSelect?: (location: { lat: number; lng: number }) => void
   selectedLocation?: { lat: number; lng: number } | null
-  shops?: Array<{
-    id: string
-    shopName: string
-    location: { lat: number; lng: number }
-    taxStatus: "paid" | "unpaid"
-  }>
+  shops?: Shop[]
   center?: { lat: number; lng: number }
   zoom?: number
+  height?: string
+}
+
+// Component to handle map clicks
+function LocationMarker({ onLocationSelect }: { onLocationSelect?: (location: { lat: number; lng: number }) => void }) {
+  const [position, setPosition] = useState<{ lat: number; lng: number } | null>(null)
+
+  const map = useMapEvents({
+    click(e) {
+      const newPosition = { lat: e.latlng.lat, lng: e.latlng.lng }
+      setPosition(newPosition)
+      if (onLocationSelect) {
+        onLocationSelect(newPosition)
+      }
+    },
+  })
+
+  return position === null ? null : (
+    <Marker position={[position.lat, position.lng]}>
+      <Popup>Selected Location</Popup>
+    </Marker>
+  )
 }
 
 export function MapComponent({
@@ -21,113 +80,73 @@ export function MapComponent({
   shops = [],
   center = { lat: 28.6139, lng: 77.209 }, // Default to Delhi
   zoom = 10,
+  height = "400px",
 }: MapComponentProps) {
-  const mapRef = useRef<HTMLDivElement>(null)
-  const mapInstanceRef = useRef<any>(null)
-  const markerRef = useRef<any>(null)
   const [isClient, setIsClient] = useState(false)
 
   useEffect(() => {
     setIsClient(true)
   }, [])
 
-  useEffect(() => {
-    if (!isClient || !mapRef.current) return
-
-    // Dynamically import Leaflet only on client side
-    const initMap = async () => {
-      const L = (await import("leaflet")).default
-
-      // Import CSS
-      await import("leaflet/dist/leaflet.css")
-
-      // Fix for default markers in Leaflet
-      delete (L.Icon.Default.prototype as any)._getIconUrl
-      L.Icon.Default.mergeOptions({
-        iconRetinaUrl: "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon-2x.png",
-        iconUrl: "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon.png",
-        shadowUrl: "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png",
-      })
-
-      // Initialize map
-      const map = L.map(mapRef.current!).setView([center.lat, center.lng], zoom)
-      mapInstanceRef.current = map
-
-      // Add tile layer
-      L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
-        attribution: "© OpenStreetMap contributors",
-      }).addTo(map)
-
-      // Add click handler for location selection
-      if (onLocationSelect) {
-        map.on("click", (e: any) => {
-          const { lat, lng } = e.latlng
-          onLocationSelect({ lat, lng })
-
-          // Remove existing marker
-          if (markerRef.current) {
-            map.removeLayer(markerRef.current)
-          }
-
-          // Add new marker
-          markerRef.current = L.marker([lat, lng]).addTo(map)
-        })
-      }
-
-      // Add shop markers
-      shops.forEach((shop) => {
-        const icon = L.divIcon({
-          className: "custom-marker",
-          html: `<div class="w-6 h-6 rounded-full border-2 border-white shadow-lg ${
-            shop.taxStatus === "paid" ? "bg-green-500" : "bg-red-500"
-          }"></div>`,
-          iconSize: [24, 24],
-          iconAnchor: [12, 12],
-        })
-
-        L.marker([shop.location.lat, shop.location.lng], { icon })
-          .bindPopup(`
-            <div class="p-2">
-              <h3 class="font-semibold">${shop.shopName}</h3>
-              <p class="text-sm ${shop.taxStatus === "paid" ? "text-green-600" : "text-red-600"}">
-                Tax Status: ${shop.taxStatus === "paid" ? "Paid" : "Unpaid"}
-              </p>
-            </div>
-          `)
-          .addTo(map)
-      })
-
-      // Update marker when selectedLocation changes
-      if (selectedLocation) {
-        // Remove existing marker
-        if (markerRef.current) {
-          map.removeLayer(markerRef.current)
-        }
-
-        // Add new marker
-        markerRef.current = L.marker([selectedLocation.lat, selectedLocation.lng]).addTo(map)
-
-        // Center map on selected location
-        map.setView([selectedLocation.lat, selectedLocation.lng], 15)
-      }
-    }
-
-    initMap()
-
-    return () => {
-      if (mapInstanceRef.current) {
-        mapInstanceRef.current.remove()
-      }
-    }
-  }, [isClient, center.lat, center.lng, zoom, shops, selectedLocation])
-
   if (!isClient) {
     return (
-      <div className="leaflet-container flex items-center justify-center bg-gray-100">
+      <div
+        className="flex items-center justify-center bg-gray-100 rounded-lg border"
+        style={{ height }}
+      >
         <div className="text-gray-500">Loading map...</div>
       </div>
     )
   }
 
-  return <div ref={mapRef} className="leaflet-container" />
+  return (
+    <div style={{ height }} className="rounded-lg overflow-hidden border">
+      <MapContainer
+        center={[center.lat, center.lng]}
+        zoom={zoom}
+        style={{ height: "100%", width: "100%" }}
+        scrollWheelZoom={true}
+      >
+        <TileLayer
+          attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+          url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+        />
+
+        {/* Location selection marker */}
+        {onLocationSelect && <LocationMarker onLocationSelect={onLocationSelect} />}
+
+        {/* Selected location marker */}
+        {selectedLocation && !onLocationSelect && (
+          <Marker position={[selectedLocation.lat, selectedLocation.lng]}>
+            <Popup>Your Shop Location</Popup>
+          </Marker>
+        )}
+
+        {/* Shop markers with color coding */}
+        {shops.map((shop) => (
+          <Marker
+            key={shop.id}
+            position={[shop.location.lat, shop.location.lng]}
+            icon={shop.taxStatus === "paid" ? greenIcon : redIcon}
+          >
+            <Popup>
+              <div className="p-2">
+                <h3 className="font-semibold text-lg">{shop.shopName}</h3>
+                {shop.ownerName && (
+                  <p className="text-sm text-gray-600">Owner: {shop.ownerName}</p>
+                )}
+                {shop.address && (
+                  <p className="text-sm text-gray-600 mt-1">{shop.address}</p>
+                )}
+                <p className={`text-sm font-medium mt-2 ${shop.taxStatus === "paid" ? "text-green-600" : "text-red-600"
+                  }`}>
+                  Tax Status: {shop.taxStatus === "paid" ? "✅ Paid" : "❌ Unpaid"}
+                </p>
+              </div>
+            </Popup>
+          </Marker>
+        ))}
+      </MapContainer>
+    </div>
+  )
 }

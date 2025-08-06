@@ -11,8 +11,8 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Badge } from "@/components/ui/badge"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { MapComponent } from "@/components/map-component"
-import { useToast } from "@/hooks/use-toast"
 import { Store, CheckCircle, XCircle } from "lucide-react"
+import { toast } from "sonner"
 
 interface Shop {
     id: string
@@ -32,7 +32,6 @@ interface Shop {
 export default function AdminPage() {
     const { user, userRole, loading } = useAuth()
     const router = useRouter()
-    const { toast } = useToast()
     const [shops, setShops] = useState<Shop[]>([])
     const [loadingShops, setLoadingShops] = useState(true)
     const [updatingTax, setUpdatingTax] = useState<string | null>(null)
@@ -60,11 +59,7 @@ export default function AdminPage() {
             setShops(shopsData)
         } catch (error) {
             console.error("Error fetching shops:", error)
-            toast({
-                title: "Error",
-                description: "Failed to fetch shops data",
-                variant: "destructive",
-            })
+            toast.error("Failed to fetch shops data")
         } finally {
             setLoadingShops(false)
         }
@@ -81,16 +76,9 @@ export default function AdminPage() {
             // Update local state
             setShops(shops.map((shop) => (shop.id === shopId ? { ...shop, taxStatus: newStatus } : shop)))
 
-            toast({
-                title: "Success",
-                description: `Tax status updated to ${newStatus}`,
-            })
+            toast.success(`Tax status updated to ${newStatus}`)
         } catch (error) {
-            toast({
-                title: "Error",
-                description: "Failed to update tax status",
-                variant: "destructive",
-            })
+            toast.error("Failed to update tax status")
         } finally {
             setUpdatingTax(null)
         }
