@@ -2,10 +2,10 @@
 
 import type React from "react"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { useAuth } from "@/components/auth-provider"
 import { useRouter } from "next/navigation"
-import { collection, addDoc } from "firebase/firestore"
+import { collection, addDoc, doc, getDoc } from "firebase/firestore"
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage"
 import { db, storage } from "@/lib/firebase"
 import { Button } from "@/components/ui/button"
@@ -14,9 +14,19 @@ import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { MapComponent } from "@/components/map-component"
-import { ArrowLeft, Upload } from "lucide-react"
+import { ArrowLeft, Upload, MapPin } from 'lucide-react'
 import Link from "next/link"
 import { toast } from "sonner"
+
+interface UserData {
+    country: string
+    countryName: string
+    city?: string
+    location: {
+        country: { lat: number; lng: number }
+        city?: { lat: number; lng: number }
+    }
+}
 
 export default function RegisterShopPage() {
     const { user } = useAuth()
@@ -31,6 +41,38 @@ export default function RegisterShopPage() {
     const [location, setLocation] = useState<{ lat: number; lng: number } | null>(null)
     const [image, setImage] = useState<File | null>(null)
     const [loading, setLoading] = useState(false)
+    const [userData, setUserData] = useState<UserData | null>(null)
+    const [mapCenter, setMapCenter] = useState({ lat: 28.6139, lng: 77.209 })
+    const [mapZoom, setMapZoom] = useState(10)
+
+    useEffect(() => {
+        if (user) {
+            fetchUserData()
+        }
+    }, [user])
+
+    const fetchUserData = async () => {
+        if (!user) return
+
+        try {
+            const userDoc = await getDoc(doc(db, "users", user.uid))
+            if (userDoc.exists()) {
+                const data = userDoc.data() as UserData
+                setUserData(data)
+
+                // Set map center based on user's city or country
+                if (data.location?.city) {
+                    setMapCenter({ lat: data.location.city.lat, lng: data.location.city.lng })
+                    setMapZoom(12)
+                } else if (data.location?.country) {
+                    setMapCenter({ lat: data.location.country.lat, lng: data.location.country.lng })
+                    setMapZoom(6)
+                }
+            }
+        } catch (error) {
+            console.error("Error fetching user data:", error)
+        }
+    }
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault()
@@ -60,6 +102,9 @@ export default function RegisterShopPage() {
                 location,
                 imageUrl,
                 userId: user.uid,
+                userCountry: userData?.country || "",
+                userCountryName: userData?.countryName || "",
+                userCity: userData?.city || "",
                 taxStatus: "unpaid",
                 createdAt: new Date(),
             })
@@ -67,8 +112,8 @@ export default function RegisterShopPage() {
             toast.success("Shop registered successfully!")
 
             router.push("/dashboard")
-        } catch (error) {
-            if (error instanceof Error) toast(error.message)
+        } catch (error: any) {
+            toast.error(error.message || "Error")
         } finally {
             setLoading(false)
         }
@@ -95,7 +140,14 @@ export default function RegisterShopPage() {
                     <Card>
                         <CardHeader>
                             <CardTitle>Shop Registration Form</CardTitle>
-                            <CardDescription>Fill in the details below to register your shop</CardDescription>
+                            <CardDescription>
+                                Fill in the details below to register your shop
+                                {userData && (
+                                    <span className="block mt-1 text-blue-600">
+                                        📍 Map showing: {userData.city ? `${userData.city}, ` : ""}{userData.countryName}
+                                    </span>
+                                )}
+                            </CardDescription>
                         </CardHeader>
                         <CardContent>
                             <form onSubmit={handleSubmit} className="space-y-6">
@@ -157,13 +209,31 @@ export default function RegisterShopPage() {
                                 </div>
 
                                 <div className="space-y-2">
-                                    <Label>Shop Location</Label>
-                                    <p className="text-sm text-gray-600 mb-2">Click on the map to select your shop's location</p>
-                                    <MapComponent onLocationSelect={setLocation} selectedLocation={location} />
+                                    <Label>Shop Location *</Label>
+                                    <p className="text-sm text-gray-600 mb-2">
+                                        Click on the map to select your shop's location or use your current location
+                                    </p>
+                                    <MapComponent
+                                        onLocationSelect={setLocation}
+                                        selectedLocation={location}
+                                        center={mapCenter}
+                                        zoom={mapZoom}
+                                        height="400px"
+                                        showCurrentLocation={true}
+                                    />
                                     {location && (
-                                        <p className="text-sm text-green-600">
-                                            Location selected: {location.lat.toFixed(6)}, {location.lng.toFixed(6)}
-                                        </p>
+                                        <div className="mt-2 p-3 bg-green-50 border border-green-200 rounded-md">
+                                            <p className="text-sm text-green-700 font-medium">
+                                                ✅ Location selected: {location.lat.toFixed(6)}, {location.lng.toFixed(6)}
+                                            </p>
+                                        </div>
+                                    )}
+                                    {!location && (
+                                        <div className="mt-2 p-3 bg-yellow-50 border border-yellow-200 rounded-md">
+                                            <p className="text-sm text-yellow-700">
+                                                📍 Please click on the map to select your shop's location or use the "Use Current Location" button
+                                            </p>
+                                        </div>
                                     )}
                                 </div>
 

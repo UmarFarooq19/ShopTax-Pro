@@ -9,7 +9,7 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { MapComponent } from "@/components/map-component"
-import { ArrowLeft, Store, User, Phone, MapPin, Calendar } from "lucide-react"
+import { ArrowLeft, Store, User, Phone, MapPin, Calendar } from 'lucide-react'
 import Link from "next/link"
 
 interface Shop {
@@ -180,7 +180,12 @@ export default function ShopDetailsPage() {
                                 <CardDescription>Exact location of your shop on the map</CardDescription>
                             </CardHeader>
                             <CardContent>
-                                <MapComponent center={shop.location} zoom={15} selectedLocation={shop.location} />
+                                <MapComponent
+                                    center={shop.location}
+                                    zoom={15}
+                                    selectedLocation={shop.location}
+                                    height="400px"
+                                />
                                 <div className="mt-4 text-sm text-gray-600">
                                     <p>
                                         Coordinates: {shop.location.lat.toFixed(6)}, {shop.location.lng.toFixed(6)}
