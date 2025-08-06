@@ -11,7 +11,8 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Badge } from "@/components/ui/badge"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { MapComponent } from "@/components/map-component"
-import { Store, CheckCircle, XCircle } from "lucide-react"
+import { Store, CheckCircle, XCircle } from 'lucide-react'
+import { MapLegend } from "@/components/map-legend"
 import { toast } from "sonner"
 
 interface Shop {
@@ -150,17 +151,29 @@ export default function AdminPage() {
                 <Card className="mb-8">
                     <CardHeader>
                         <CardTitle>Shop Locations Map</CardTitle>
-                        <CardDescription>Green pins indicate shops with paid tax, red pins indicate unpaid tax</CardDescription>
+                        <CardDescription>Interactive map showing all registered shops with tax status indicators</CardDescription>
                     </CardHeader>
                     <CardContent>
-                        <MapComponent
-                            shops={shops.map((shop) => ({
-                                id: shop.id,
-                                shopName: shop.shopName,
-                                location: shop.location,
-                                taxStatus: shop.taxStatus,
-                            }))}
-                        />
+                        <div className="grid lg:grid-cols-4 gap-4">
+                            <div className="lg:col-span-3">
+                                <MapComponent
+                                    shops={shops.map((shop) => ({
+                                        id: shop.id,
+                                        shopName: shop.shopName,
+                                        location: shop.location,
+                                        taxStatus: shop.taxStatus,
+                                        ownerName: shop.ownerName,
+                                        address: shop.address,
+                                    }))}
+                                    center={{ lat: 28.6139, lng: 77.209 }}
+                                    zoom={10}
+                                    height="500px"
+                                />
+                            </div>
+                            <div className="lg:col-span-1">
+                                <MapLegend />
+                            </div>
+                        </div>
                     </CardContent>
                 </Card>
 
