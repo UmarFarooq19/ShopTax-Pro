@@ -13,40 +13,40 @@ export default function HomePage() {
   const router = useRouter()
   const [mounted, setMounted] = useState(false)
 
-  // useEffect(() => {
-  //   setMounted(true)
-  // }, [])
+  useEffect(() => {
+    setMounted(true)
+  }, [])
 
-  // useEffect(() => {
-  //   if (mounted && !loading && user) {
-  //     if (userRole === "admin") {
-  //       router.push("/admin")
-  //     } else {
-  //       router.push("/dashboard")
-  //     }
-  //   }
-  // }, [user, userRole, loading, router, mounted])
+  useEffect(() => {
+    if (mounted && !loading && user) {
+      if (userRole === "admin") {
+        router.push("/admin")
+      } else {
+        router.push("/dashboard")
+      }
+    }
+  }, [user, userRole, loading, router, mounted])
 
-  // // Don't render anything until mounted on client
-  // if (!mounted) {
-  //   return (
-  //     <div className="min-h-screen flex items-center justify-center">
-  //       <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-primary"></div>
-  //     </div>
-  //   )
-  // }
+  // Don't render anything until mounted on client
+  if (!mounted) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-primary"></div>
+      </div>
+    )
+  }
 
-  // if (loading) {
-  //   return (
-  //     <div className="min-h-screen flex items-center justify-center">
-  //       <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-primary"></div>
-  //     </div>
-  //   )
-  // }
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-primary"></div>
+      </div>
+    )
+  }
 
-  // if (user) {
-  //   return null // Will redirect based on role
-  // }
+  if (user) {
+    return null // Will redirect based on role
+  }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
