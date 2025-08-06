@@ -6,6 +6,7 @@ import L from "leaflet"
 import "leaflet/dist/leaflet.css"
 import { Button } from "@/components/ui/button"
 import { MapPin, Navigation } from 'lucide-react'
+import { toast } from "sonner"
 
 // Fix for default markers in Leaflet
 delete (L.Icon.Default.prototype as any)._getIconUrl
@@ -21,16 +22,26 @@ const createCustomIcon = (color: string) => {
     className: "custom-div-icon",
     html: `
       <div style="
-        width: 24px;
-        height: 24px;
+        width: 28px;
+        height: 28px;
         border-radius: 50%;
         background-color: ${color};
-        border: 3px solid white;
-        box-shadow: 0 2px 4px rgba(0,0,0,0.3);
-      "></div>
+        border: 4px solid white;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      ">
+        <div style="
+          width: 12px;
+          height: 12px;
+          border-radius: 50%;
+          background-color: white;
+        "></div>
+      </div>
     `,
-    iconSize: [24, 24],
-    iconAnchor: [12, 12],
+    iconSize: [28, 28],
+    iconAnchor: [14, 14],
   })
 }
 
@@ -39,24 +50,16 @@ const currentLocationIcon = L.divIcon({
   className: "current-location-icon",
   html: `
     <div style="
-      width: 20px;
-      height: 20px;
+      width: 24px;
+      height: 24px;
       border-radius: 50%;
       background-color: #3b82f6;
-      border: 3px solid white;
-      box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.3);
-      animation: pulse 2s infinite;
-    "></div>
-    <style>
-      @keyframes pulse {
-        0% { box-shadow: 0 0 0 0 rgba(59, 130, 246, 0.7); }
-        70% { box-shadow: 0 0 0 10px rgba(59, 130, 246, 0); }
-        100% { box-shadow: 0 0 0 0 rgba(59, 130, 246, 0); }
-      }
-    </style>
+      border: 4px solid white;
+      box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.3);
+    " class="pulse-ring"></div>
   `,
-  iconSize: [20, 20],
-  iconAnchor: [10, 10],
+  iconSize: [24, 24],
+  iconAnchor: [12, 12],
 })
 
 const greenIcon = createCustomIcon("#10b981") // green-500
@@ -105,12 +108,26 @@ function LocationMarker({
     <>
       {position && (
         <Marker position={[position.lat, position.lng]}>
-          <Popup>Selected Shop Location</Popup>
+          <Popup>
+            <div className="text-center p-2">
+              <h3 className="font-semibold text-blue-600">Selected Shop Location</h3>
+              <p className="text-sm text-gray-600 mt-1">
+                {position.lat.toFixed(6)}, {position.lng.toFixed(6)}
+              </p>
+            </div>
+          </Popup>
         </Marker>
       )}
       {currentLocation && (
         <Marker position={[currentLocation.lat, currentLocation.lng]} icon={currentLocationIcon}>
-          <Popup>Your Current Location</Popup>
+          <Popup>
+            <div className="text-center p-2">
+              <h3 className="font-semibold text-blue-600">Your Current Location</h3>
+              <p className="text-sm text-gray-600 mt-1">
+                {currentLocation.lat.toFixed(6)}, {currentLocation.lng.toFixed(6)}
+              </p>
+            </div>
+          </Popup>
         </Marker>
       )}
     </>
@@ -121,14 +138,13 @@ export function MapComponent({
   onLocationSelect,
   selectedLocation,
   shops = [],
-  center = { lat: 28.6139, lng: 77.209 },
+  center = { lat: 24.8607, lng: 67.0011 }, // Default to Karachi, Pakistan
   zoom = 10,
   height = "400px",
   showCurrentLocation = false,
 }: MapComponentProps) {
   const [isClient, setIsClient] = useState(false)
   const [currentLocation, setCurrentLocation] = useState<{ lat: number; lng: number } | null>(null)
-  const [locationError, setLocationError] = useState<string | null>(null)
   const [gettingLocation, setGettingLocation] = useState(false)
 
   useEffect(() => {
@@ -137,12 +153,11 @@ export function MapComponent({
 
   const getCurrentLocation = () => {
     if (!navigator.geolocation) {
-      setLocationError("Geolocation is not supported by this browser.")
+      toast.error("Geolocation is not supported by this browser.")
       return
     }
 
     setGettingLocation(true)
-    setLocationError(null)
 
     navigator.geolocation.getCurrentPosition(
       (position) => {
@@ -157,21 +172,23 @@ export function MapComponent({
         if (onLocationSelect) {
           onLocationSelect(location)
         }
+
+        toast.success("Current location detected successfully!")
       },
       (error) => {
         setGettingLocation(false)
         switch (error.code) {
           case error.PERMISSION_DENIED:
-            setLocationError("Location access denied by user.")
+            toast.error("Location access denied. Please enable location permissions.")
             break
           case error.POSITION_UNAVAILABLE:
-            setLocationError("Location information is unavailable.")
+            toast.error("Location information is unavailable.")
             break
           case error.TIMEOUT:
-            setLocationError("Location request timed out.")
+            toast.error("Location request timed out.")
             break
           default:
-            setLocationError("An unknown error occurred.")
+            toast.error("An unknown error occurred while getting location.")
             break
         }
       },
@@ -186,56 +203,56 @@ export function MapComponent({
   if (!isClient) {
     return (
       <div
-        className="flex items-center justify-center bg-gray-100 rounded-lg border"
+        className="flex items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100 rounded-xl border border-blue-200"
         style={{ height }}
       >
-        <div className="text-gray-500">Loading map...</div>
+        <div className="text-blue-600 font-medium">Loading interactive map...</div>
       </div>
     )
   }
 
   return (
-    <div className="space-y-3">
+    <div className="space-y-4">
       {showCurrentLocation && (
-        <div className="flex items-center justify-between p-3 bg-blue-50 border border-blue-200 rounded-lg">
-          <div className="flex items-center space-x-2">
-            <Navigation className="h-4 w-4 text-blue-600" />
-            <span className="text-sm text-blue-700">
-              {currentLocation
-                ? `Current location: ${currentLocation.lat.toFixed(4)}, ${currentLocation.lng.toFixed(4)}`
-                : "Get your current location for easier shop registration"
-              }
-            </span>
+        <div className="flex items-center justify-between p-4 bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200 rounded-xl">
+          <div className="flex items-center space-x-3">
+            <div className="p-2 bg-blue-100 rounded-lg">
+              <Navigation className="h-5 w-5 text-blue-600" />
+            </div>
+            <div>
+              <p className="font-semibold text-blue-900">
+                {currentLocation ? "Current Location Detected" : "Use Your Current Location"}
+              </p>
+              <p className="text-sm text-blue-700">
+                {currentLocation
+                  ? `${currentLocation.lat.toFixed(4)}, ${currentLocation.lng.toFixed(4)}`
+                  : "Click to automatically detect your location"
+                }
+              </p>
+            </div>
           </div>
           <Button
             size="sm"
-            variant="outline"
             onClick={getCurrentLocation}
             disabled={gettingLocation}
-            className="text-blue-600 border-blue-300 hover:bg-blue-100"
+            className="bg-blue-600 hover:bg-blue-700 text-white shadow-lg"
           >
             {gettingLocation ? (
               <>
-                <div className="animate-spin rounded-full h-3 w-3 border-b-2 border-blue-600 mr-2"></div>
-                Getting...
+                <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
+                Detecting...
               </>
             ) : (
               <>
-                <MapPin className="h-3 w-3 mr-1" />
-                Use Current Location
+                <MapPin className="h-4 w-4 mr-2" />
+                Get Location
               </>
             )}
           </Button>
         </div>
       )}
 
-      {locationError && (
-        <div className="p-3 bg-red-50 border border-red-200 rounded-lg">
-          <p className="text-sm text-red-700">{locationError}</p>
-        </div>
-      )}
-
-      <div style={{ height }} className="rounded-lg overflow-hidden border">
+      <div style={{ height }} className="rounded-xl overflow-hidden border-2 border-gray-200 shadow-lg">
         <MapContainer
           center={currentLocation ? [currentLocation.lat, currentLocation.lng] : [center.lat, center.lng]}
           zoom={currentLocation ? 15 : zoom}
@@ -258,7 +275,14 @@ export function MapComponent({
           {/* Selected location marker */}
           {selectedLocation && !onLocationSelect && (
             <Marker position={[selectedLocation.lat, selectedLocation.lng]}>
-              <Popup>Your Shop Location</Popup>
+              <Popup>
+                <div className="text-center p-2">
+                  <h3 className="font-semibold text-green-600">Your Shop Location</h3>
+                  <p className="text-sm text-gray-600 mt-1">
+                    {selectedLocation.lat.toFixed(6)}, {selectedLocation.lng.toFixed(6)}
+                  </p>
+                </div>
+              </Popup>
             </Marker>
           )}
 
@@ -270,18 +294,24 @@ export function MapComponent({
               icon={shop.taxStatus === "paid" ? greenIcon : redIcon}
             >
               <Popup>
-                <div className="p-2">
-                  <h3 className="font-semibold text-lg">{shop.shopName}</h3>
+                <div className="p-3 min-w-[200px]">
+                  <h3 className="font-bold text-lg text-gray-800 mb-2">{shop.shopName}</h3>
                   {shop.ownerName && (
-                    <p className="text-sm text-gray-600">Owner: {shop.ownerName}</p>
+                    <p className="text-sm text-gray-600 mb-1">
+                      <span className="font-semibold">Owner:</span> {shop.ownerName}
+                    </p>
                   )}
                   {shop.address && (
-                    <p className="text-sm text-gray-600 mt-1">{shop.address}</p>
+                    <p className="text-sm text-gray-600 mb-2">
+                      <span className="font-semibold">Address:</span> {shop.address}
+                    </p>
                   )}
-                  <p className={`text-sm font-medium mt-2 ${shop.taxStatus === "paid" ? "text-green-600" : "text-red-600"
+                  <div className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-semibold ${shop.taxStatus === "paid"
+                      ? "bg-green-100 text-green-800"
+                      : "bg-red-100 text-red-800"
                     }`}>
-                    Tax Status: {shop.taxStatus === "paid" ? "✅ Paid" : "❌ Unpaid"}
-                  </p>
+                    {shop.taxStatus === "paid" ? "✅ Tax Paid" : "❌ Tax Unpaid"}
+                  </div>
                 </div>
               </Popup>
             </Marker>
