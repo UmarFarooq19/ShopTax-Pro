@@ -120,3 +120,33 @@
     @apply bg-background text-foreground;
   }
 }
+
+
+/* Leaflet CSS overrides */
+.leaflet-container {
+  font-family: inherit;
+}
+
+.leaflet-popup-content-wrapper {
+  border-radius: 8px;
+}
+
+.leaflet-popup-content {
+  margin: 8px 12px;
+  line-height: 1.4;
+}
+
+/* Custom marker styles */
+.custom-div-icon {
+  background: transparent !important;
+  border: none !important;
+}
+
+/* Fix for leaflet controls */
+.leaflet-control-zoom a {
+  color: #333 !important;
+}
+
+.leaflet-control-attribution {
+  font-size: 10px !important;
+}
