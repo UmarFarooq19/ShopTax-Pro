@@ -15,7 +15,8 @@ import { Textarea } from "@/components/ui/textarea"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { toast } from "sonner"
 import { MapComponent } from "@/components/map-component"
-import { ArrowLeft, Upload, Store, User, Phone, MapPin, Camera } from 'lucide-react'
+import { AddressSearch } from "@/components/address-search"
+import { ArrowLeft, Upload, Store, User, Phone, MapPin, Camera, Building2 } from 'lucide-react'
 import Link from "next/link"
 
 interface UserData {
@@ -85,11 +86,19 @@ export default function RegisterShopPage() {
         }
     }
 
+    const handleAddressSelect = (addressData: { lat: number; lng: number; address: string }) => {
+        setLocation({ lat: addressData.lat, lng: addressData.lng })
+        setMapCenter({ lat: addressData.lat, lng: addressData.lng })
+        setMapZoom(15)
+        setFormData({ ...formData, address: addressData.address })
+        toast.success("Location selected from address search!")
+    }
+
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault()
 
         if (!location) {
-            toast.error("Please select a location on the map")
+            toast.error("Please select a location on the map or search for an address")
             return
         }
 
@@ -131,8 +140,8 @@ export default function RegisterShopPage() {
     }
 
     return (
-        <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50">
-            <header className="bg-white/80 backdrop-blur-md shadow-sm border-b border-gray-200">
+        <div className="min-h-screen bg-gray-50">
+            <header className="bg-white shadow-sm border-b border-gray-200">
                 <div className="container mx-auto px-4 py-4">
                     <div className="flex items-center space-x-4">
                         <Button asChild variant="ghost" size="sm" className="hover:bg-blue-50">
@@ -141,31 +150,34 @@ export default function RegisterShopPage() {
                                 Back to Dashboard
                             </Link>
                         </Button>
-                        <div>
-                            <h1 className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
-                                Register New Shop
-                            </h1>
-                            <p className="text-sm text-gray-600">Add your business to the tax management system</p>
+                        <div className="flex items-center space-x-3">
+                            <div className="w-10 h-10 bg-gradient-to-br from-blue-600 to-purple-600 rounded-xl flex items-center justify-center">
+                                <Building2 className="h-6 w-6 text-white" />
+                            </div>
+                            <div>
+                                <h1 className="text-2xl font-bold text-gray-900">Register New Shop</h1>
+                                <p className="text-sm text-gray-600">Add your business to the tax management system</p>
+                            </div>
                         </div>
                     </div>
                 </div>
             </header>
 
             <main className="container mx-auto px-4 py-8">
-                <div className="max-w-3xl mx-auto">
-                    <Card className="shadow-xl border-0 bg-white/90 backdrop-blur-sm">
-                        <CardHeader className="bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-t-lg">
+                <div className="max-w-4xl mx-auto">
+                    <Card className="shadow-lg border-0 bg-white">
+                        <CardHeader className="border-b border-gray-100">
                             <div className="flex items-center space-x-3">
-                                <div className="p-2 bg-white/20 rounded-lg">
-                                    <Store className="h-6 w-6" />
+                                <div className="w-12 h-12 bg-gradient-to-br from-blue-100 to-purple-100 rounded-xl flex items-center justify-center">
+                                    <Store className="h-6 w-6 text-blue-600" />
                                 </div>
                                 <div>
-                                    <CardTitle className="text-2xl">Shop Registration Form</CardTitle>
-                                    <CardDescription className="text-blue-100">
+                                    <CardTitle className="text-2xl text-gray-900">Shop Registration Form</CardTitle>
+                                    <CardDescription className="text-gray-600">
                                         Fill in the details below to register your shop
                                         {userData && (
-                                            <span className="block mt-1">
-                                                📍 Map showing: {userData.city ? `${userData.city}, ` : ""}{userData.countryName || "Karachi, Pakistan"}
+                                            <span className="block mt-1 text-blue-600">
+                                                📍 Default location: {userData.city ? `${userData.city}, ` : ""}{userData.countryName || "Karachi, Pakistan"}
                                             </span>
                                         )}
                                     </CardDescription>
@@ -221,20 +233,39 @@ export default function RegisterShopPage() {
                                     />
                                 </div>
 
-                                <div className="space-y-2">
-                                    <Label htmlFor="address" className="text-sm font-semibold text-gray-700 flex items-center">
+                                <div className="space-y-4">
+                                    <Label className="text-sm font-semibold text-gray-700 flex items-center">
                                         <MapPin className="h-4 w-4 mr-2 text-blue-600" />
-                                        Shop Address
+                                        Shop Address & Location
                                     </Label>
-                                    <Textarea
-                                        id="address"
-                                        placeholder="Enter complete shop address"
-                                        value={formData.address}
-                                        onChange={(e) => setFormData({ ...formData, address: e.target.value })}
-                                        rows={3}
-                                        className="border-gray-200 focus:border-blue-500 focus:ring-blue-500 resize-none"
-                                        required
-                                    />
+
+                                    {/* Address Search */}
+                                    <div className="space-y-2">
+                                        <Label htmlFor="addressSearch" className="text-sm text-gray-600">
+                                            Search for your shop address (e.g., "Orangi Town Karachi" or "Times Square New York")
+                                        </Label>
+                                        <AddressSearch
+                                            onLocationSelect={handleAddressSelect}
+                                            placeholder="Type your shop address to search..."
+                                            className="w-full"
+                                        />
+                                    </div>
+
+                                    {/* Manual Address Input */}
+                                    <div className="space-y-2">
+                                        <Label htmlFor="address" className="text-sm text-gray-600">
+                                            Or enter address manually
+                                        </Label>
+                                        <Textarea
+                                            id="address"
+                                            placeholder="Enter complete shop address"
+                                            value={formData.address}
+                                            onChange={(e) => setFormData({ ...formData, address: e.target.value })}
+                                            rows={3}
+                                            className="border-gray-200 focus:border-blue-500 focus:ring-blue-500 resize-none"
+                                            required
+                                        />
+                                    </div>
                                 </div>
 
                                 <div className="space-y-2">
@@ -260,10 +291,10 @@ export default function RegisterShopPage() {
                                 <div className="space-y-4">
                                     <Label className="text-sm font-semibold text-gray-700 flex items-center">
                                         <MapPin className="h-4 w-4 mr-2 text-blue-600" />
-                                        Shop Location *
+                                        Confirm Shop Location on Map *
                                     </Label>
                                     <p className="text-sm text-gray-600">
-                                        Click on the map to select your shop's exact location or use your current location
+                                        The map will automatically update when you search for an address above. You can also click directly on the map to set your location.
                                     </p>
                                     <MapComponent
                                         onLocationSelect={setLocation}
@@ -274,7 +305,7 @@ export default function RegisterShopPage() {
                                         showCurrentLocation={true}
                                     />
                                     {location && (
-                                        <div className="p-4 bg-gradient-to-r from-green-50 to-emerald-50 border border-green-200 rounded-xl">
+                                        <div className="p-4 bg-green-50 border border-green-200 rounded-xl">
                                             <p className="text-sm text-green-700 font-semibold flex items-center">
                                                 <MapPin className="h-4 w-4 mr-2" />
                                                 Location confirmed: {location.lat.toFixed(6)}, {location.lng.toFixed(6)}
@@ -282,10 +313,10 @@ export default function RegisterShopPage() {
                                         </div>
                                     )}
                                     {!location && (
-                                        <div className="p-4 bg-gradient-to-r from-yellow-50 to-orange-50 border border-yellow-200 rounded-xl">
+                                        <div className="p-4 bg-yellow-50 border border-yellow-200 rounded-xl">
                                             <p className="text-sm text-yellow-700 font-medium flex items-center">
                                                 <MapPin className="h-4 w-4 mr-2" />
-                                                Please click on the map to select your shop's location
+                                                Please search for an address above or click on the map to select your shop's location
                                             </p>
                                         </div>
                                     )}
