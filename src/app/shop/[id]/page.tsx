@@ -9,7 +9,7 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { MapComponent } from "@/components/map-component"
-import { ArrowLeft, Store, User, Phone, MapPin, Calendar, Building2, Camera } from 'lucide-react'
+import { ArrowLeft, Store, User, Phone, MapPin, Calendar, Building2, Globe } from 'lucide-react'
 import Link from "next/link"
 
 interface Shop {
@@ -71,7 +71,7 @@ export default function ShopDetailsPage() {
 
     if (loading) {
         return (
-            <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-purple-50">
+            <div className="min-h-screen flex items-center justify-center bg-gray-50">
                 <div className="text-center">
                     <div className="animate-spin rounded-full h-16 w-16 border-b-4 border-blue-600 mx-auto mb-4"></div>
                     <p className="text-gray-600 font-medium">Loading shop details...</p>
@@ -82,12 +82,12 @@ export default function ShopDetailsPage() {
 
     if (!shop) {
         return (
-            <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-purple-50">
+            <div className="min-h-screen flex items-center justify-center bg-gray-50">
                 <div className="text-center">
-                    <div className="mx-auto w-24 h-24 bg-gradient-to-br from-gray-100 to-gray-200 rounded-3xl flex items-center justify-center mb-6">
+                    <div className="mx-auto w-24 h-24 bg-gray-100 rounded-full flex items-center justify-center mb-6">
                         <Store className="h-12 w-12 text-gray-400" />
                     </div>
-                    <h2 className="text-3xl font-bold text-gray-900 mb-4">Shop not found</h2>
+                    <h2 className="text-2xl font-bold text-gray-900 mb-4">Shop not found</h2>
                     <p className="text-gray-600 mb-6">The shop you're looking for doesn't exist or you don't have access to it.</p>
                     <Button asChild className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white">
                         <Link href="/dashboard">Back to Dashboard</Link>
@@ -98,8 +98,8 @@ export default function ShopDetailsPage() {
     }
 
     return (
-        <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50">
-            <header className="bg-white/80 backdrop-blur-md shadow-lg border-b border-gray-200">
+        <div className="min-h-screen bg-gray-50">
+            <header className="bg-white shadow-sm border-b border-gray-200">
                 <div className="container mx-auto px-4 py-4">
                     <div className="flex items-center space-x-4">
                         <Button asChild variant="ghost" size="sm" className="hover:bg-blue-50">
@@ -109,13 +109,11 @@ export default function ShopDetailsPage() {
                             </Link>
                         </Button>
                         <div className="flex items-center space-x-3">
-                            <div className="p-2 bg-gradient-to-br from-blue-500 to-purple-600 rounded-xl">
+                            <div className="w-10 h-10 bg-gradient-to-br from-blue-600 to-purple-600 rounded-xl flex items-center justify-center">
                                 <Building2 className="h-6 w-6 text-white" />
                             </div>
                             <div>
-                                <h1 className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
-                                    Shop Details
-                                </h1>
+                                <h1 className="text-2xl font-bold text-gray-900">Shop Details</h1>
                                 <p className="text-sm text-gray-600">Complete information about your business</p>
                             </div>
                         </div>
@@ -127,21 +125,21 @@ export default function ShopDetailsPage() {
                 <div className="max-w-6xl mx-auto">
                     <div className="grid lg:grid-cols-2 gap-8">
                         {/* Shop Information */}
-                        <Card className="shadow-xl border-0 bg-white/90 backdrop-blur-sm">
-                            <CardHeader className="bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-t-lg">
+                        <Card className="shadow-lg border-0 bg-white">
+                            <CardHeader className="border-b border-gray-100">
                                 <div className="flex justify-between items-start">
                                     <div className="flex items-center space-x-3">
-                                        <div className="p-2 bg-white/20 rounded-lg">
-                                            <Store className="h-6 w-6" />
+                                        <div className="w-12 h-12 bg-gradient-to-br from-blue-100 to-purple-100 rounded-xl flex items-center justify-center">
+                                            <Store className="h-6 w-6 text-blue-600" />
                                         </div>
                                         <div>
-                                            <CardTitle className="text-2xl">{shop.shopName}</CardTitle>
-                                            <CardDescription className="text-blue-100">Business Information & Details</CardDescription>
+                                            <CardTitle className="text-2xl text-gray-900">{shop.shopName}</CardTitle>
+                                            <CardDescription className="text-gray-600">Business Information & Details</CardDescription>
                                         </div>
                                     </div>
                                     <Badge
                                         variant={shop.taxStatus === "paid" ? "default" : "destructive"}
-                                        className={`${shop.taxStatus === "paid" ? "bg-green-100 text-green-800" : "bg-red-100 text-red-800"} font-semibold text-sm`}
+                                        className={`${shop.taxStatus === "paid" ? "bg-green-100 text-green-800 border-green-200" : "bg-red-100 text-red-800 border-red-200"} font-semibold text-sm border`}
                                     >
                                         {shop.taxStatus === "paid" ? "✅ Tax Paid" : "❌ Tax Pending"}
                                     </Badge>
@@ -149,7 +147,7 @@ export default function ShopDetailsPage() {
                             </CardHeader>
                             <CardContent className="p-6 space-y-6">
                                 {shop.imageUrl && (
-                                    <div className="aspect-video rounded-xl overflow-hidden shadow-lg bg-gradient-to-br from-gray-100 to-gray-200">
+                                    <div className="aspect-video rounded-xl overflow-hidden shadow-md bg-gray-100">
                                         <img
                                             src={shop.imageUrl || "/placeholder.svg"}
                                             alt={shop.shopName}
@@ -159,8 +157,8 @@ export default function ShopDetailsPage() {
                                 )}
 
                                 <div className="grid gap-4">
-                                    <div className="flex items-center space-x-4 p-4 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl border border-blue-100">
-                                        <div className="p-2 bg-blue-100 rounded-lg">
+                                    <div className="flex items-center space-x-4 p-4 bg-blue-50 rounded-xl border border-blue-100">
+                                        <div className="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
                                             <Store className="h-5 w-5 text-blue-600" />
                                         </div>
                                         <div>
@@ -169,8 +167,8 @@ export default function ShopDetailsPage() {
                                         </div>
                                     </div>
 
-                                    <div className="flex items-center space-x-4 p-4 bg-gradient-to-r from-green-50 to-emerald-50 rounded-xl border border-green-100">
-                                        <div className="p-2 bg-green-100 rounded-lg">
+                                    <div className="flex items-center space-x-4 p-4 bg-green-50 rounded-xl border border-green-100">
+                                        <div className="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center">
                                             <User className="h-5 w-5 text-green-600" />
                                         </div>
                                         <div>
@@ -179,8 +177,8 @@ export default function ShopDetailsPage() {
                                         </div>
                                     </div>
 
-                                    <div className="flex items-center space-x-4 p-4 bg-gradient-to-r from-purple-50 to-violet-50 rounded-xl border border-purple-100">
-                                        <div className="p-2 bg-purple-100 rounded-lg">
+                                    <div className="flex items-center space-x-4 p-4 bg-purple-50 rounded-xl border border-purple-100">
+                                        <div className="w-10 h-10 bg-purple-100 rounded-lg flex items-center justify-center">
                                             <Phone className="h-5 w-5 text-purple-600" />
                                         </div>
                                         <div>
@@ -189,8 +187,8 @@ export default function ShopDetailsPage() {
                                         </div>
                                     </div>
 
-                                    <div className="flex items-start space-x-4 p-4 bg-gradient-to-r from-orange-50 to-red-50 rounded-xl border border-orange-100">
-                                        <div className="p-2 bg-orange-100 rounded-lg">
+                                    <div className="flex items-start space-x-4 p-4 bg-orange-50 rounded-xl border border-orange-100">
+                                        <div className="w-10 h-10 bg-orange-100 rounded-lg flex items-center justify-center">
                                             <MapPin className="h-5 w-5 text-orange-600 mt-1" />
                                         </div>
                                         <div>
@@ -199,8 +197,8 @@ export default function ShopDetailsPage() {
                                         </div>
                                     </div>
 
-                                    <div className="flex items-center space-x-4 p-4 bg-gradient-to-r from-gray-50 to-slate-50 rounded-xl border border-gray-100">
-                                        <div className="p-2 bg-gray-100 rounded-lg">
+                                    <div className="flex items-center space-x-4 p-4 bg-gray-50 rounded-xl border border-gray-100">
+                                        <div className="w-10 h-10 bg-gray-100 rounded-lg flex items-center justify-center">
                                             <Calendar className="h-5 w-5 text-gray-600" />
                                         </div>
                                         <div>
@@ -210,9 +208,9 @@ export default function ShopDetailsPage() {
                                     </div>
 
                                     {shop.userCountryName && (
-                                        <div className="flex items-center space-x-4 p-4 bg-gradient-to-r from-teal-50 to-cyan-50 rounded-xl border border-teal-100">
-                                            <div className="p-2 bg-teal-100 rounded-lg">
-                                                <MapPin className="h-5 w-5 text-teal-600" />
+                                        <div className="flex items-center space-x-4 p-4 bg-teal-50 rounded-xl border border-teal-100">
+                                            <div className="w-10 h-10 bg-teal-100 rounded-lg flex items-center justify-center">
+                                                <Globe className="h-5 w-5 text-teal-600" />
                                             </div>
                                             <div>
                                                 <p className="text-sm text-teal-600 font-semibold">Owner Location</p>
@@ -227,15 +225,15 @@ export default function ShopDetailsPage() {
                         </Card>
 
                         {/* Map */}
-                        <Card className="shadow-xl border-0 bg-white/90 backdrop-blur-sm">
-                            <CardHeader className="bg-gradient-to-r from-green-600 to-blue-600 text-white rounded-t-lg">
+                        <Card className="shadow-lg border-0 bg-white">
+                            <CardHeader className="border-b border-gray-100">
                                 <div className="flex items-center space-x-3">
-                                    <div className="p-2 bg-white/20 rounded-lg">
-                                        <MapPin className="h-6 w-6" />
+                                    <div className="w-12 h-12 bg-gradient-to-br from-green-100 to-blue-100 rounded-xl flex items-center justify-center">
+                                        <MapPin className="h-6 w-6 text-green-600" />
                                     </div>
                                     <div>
-                                        <CardTitle className="text-xl">Shop Location</CardTitle>
-                                        <CardDescription className="text-green-100">
+                                        <CardTitle className="text-xl text-gray-900">Shop Location</CardTitle>
+                                        <CardDescription className="text-gray-600">
                                             Exact geographical location of your business
                                         </CardDescription>
                                     </div>
@@ -250,7 +248,7 @@ export default function ShopDetailsPage() {
                                 />
                                 <div className="mt-6 p-4 bg-gradient-to-r from-blue-50 to-purple-50 rounded-xl border border-blue-200">
                                     <div className="flex items-center space-x-3">
-                                        <div className="p-2 bg-blue-100 rounded-lg">
+                                        <div className="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
                                             <MapPin className="h-5 w-5 text-blue-600" />
                                         </div>
                                         <div>
