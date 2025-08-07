@@ -12,7 +12,7 @@ import { Badge } from "@/components/ui/badge"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { MapComponent } from "@/components/map-component"
 import { toast } from "sonner"
-import { Store, CheckCircle, XCircle, Users, Eye, Edit, Trash2, LogOut, BarChart3 } from 'lucide-react'
+import { Store, CheckCircle, XCircle, Users, Eye, Trash2, LogOut, BarChart3, Building2, TrendingUp } from 'lucide-react'
 import { MapLegend } from "@/components/map-legend"
 import Link from "next/link"
 
@@ -129,7 +129,7 @@ export default function AdminPage() {
 
     if (loading || !user) {
         return (
-            <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-purple-50">
+            <div className="min-h-screen flex items-center justify-center bg-gray-50">
                 <div className="text-center">
                     <div className="animate-spin rounded-full h-16 w-16 border-b-4 border-blue-600 mx-auto mb-4"></div>
                     <p className="text-gray-600 font-medium">Loading admin dashboard...</p>
@@ -140,30 +140,29 @@ export default function AdminPage() {
 
     const paidShops = shops.filter((shop) => shop.taxStatus === "paid").length
     const unpaidShops = shops.filter((shop) => shop.taxStatus === "unpaid").length
-    const totalRevenue = paidShops * 1000 // Assuming 1000 per shop
     const activeUsers = users.filter((user) => user.status === "active").length
+    const complianceRate = shops.length > 0 ? Math.round((paidShops / shops.length) * 100) : 0
 
     return (
-        <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50">
-            <header className="bg-white/80 backdrop-blur-md shadow-lg border-b border-gray-200">
+        <div className="min-h-screen bg-gray-50">
+            <header className="bg-white shadow-sm border-b border-gray-200">
                 <div className="container mx-auto px-4 py-4">
                     <div className="flex justify-between items-center">
                         <div className="flex items-center space-x-4">
-                            <div className="p-2 bg-gradient-to-br from-blue-500 to-purple-600 rounded-xl">
-                                <BarChart3 className="h-8 w-8 text-white" />
+                            <div className="w-12 h-12 bg-gradient-to-br from-blue-600 to-purple-600 rounded-xl flex items-center justify-center">
+                                <Building2 className="h-7 w-7 text-white" />
                             </div>
                             <div>
-                                <h1 className="text-3xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
-                                    Admin Dashboard
-                                </h1>
+                                <h1 className="text-2xl font-bold text-gray-900">Admin Dashboard</h1>
                                 <p className="text-gray-600">Tax Management & System Control</p>
                             </div>
                         </div>
                         <div className="flex items-center space-x-4">
-                            <span className="text-sm text-gray-600 bg-gray-100 px-3 py-1 rounded-full">
-                                Welcome, {user.email}
-                            </span>
-                            <Button onClick={handleLogout} variant="outline" className="hover:bg-red-50 hover:text-red-600">
+                            <div className="text-right">
+                                <p className="text-sm text-gray-500">Administrator</p>
+                                <p className="text-sm font-medium text-gray-900">{user.email}</p>
+                            </div>
+                            <Button onClick={handleLogout} variant="outline" className="hover:bg-red-50 hover:text-red-600 hover:border-red-200">
                                 <LogOut className="h-4 w-4 mr-2" />
                                 Logout
                             </Button>
@@ -174,7 +173,7 @@ export default function AdminPage() {
 
             <main className="container mx-auto px-4 py-8">
                 {/* Navigation Tabs */}
-                <div className="flex space-x-1 mb-8 bg-gray-100 p-1 rounded-xl w-fit">
+                <div className="flex space-x-1 mb-8 bg-white p-1 rounded-xl w-fit shadow-sm border border-gray-200">
                     {[
                         { id: "overview", label: "Overview", icon: BarChart3 },
                         { id: "shops", label: "Shops", icon: Store },
@@ -183,9 +182,9 @@ export default function AdminPage() {
                         <button
                             key={tab.id}
                             onClick={() => setActiveTab(tab.id as any)}
-                            className={`flex items-center space-x-2 px-4 py-2 rounded-lg font-medium transition-all ${activeTab === tab.id
-                                    ? "bg-white text-blue-600 shadow-md"
-                                    : "text-gray-600 hover:text-gray-800"
+                            className={`flex items-center space-x-2 px-6 py-3 rounded-lg font-medium transition-all ${activeTab === tab.id
+                                    ? "bg-gradient-to-r from-blue-600 to-purple-600 text-white shadow-md"
+                                    : "text-gray-600 hover:text-gray-800 hover:bg-gray-50"
                                 }`}
                         >
                             <tab.icon className="h-4 w-4" />
@@ -199,7 +198,7 @@ export default function AdminPage() {
                     <div className="space-y-8">
                         {/* Statistics Cards */}
                         <div className="grid md:grid-cols-4 gap-6">
-                            <Card className="bg-gradient-to-br from-blue-500 to-blue-600 text-white border-0 shadow-xl">
+                            <Card className="bg-gradient-to-br from-blue-500 to-blue-600 text-white border-0 shadow-lg">
                                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                                     <CardTitle className="text-sm font-medium opacity-90">Total Shops</CardTitle>
                                     <Store className="h-5 w-5 opacity-80" />
@@ -210,7 +209,7 @@ export default function AdminPage() {
                                 </CardContent>
                             </Card>
 
-                            <Card className="bg-gradient-to-br from-green-500 to-green-600 text-white border-0 shadow-xl">
+                            <Card className="bg-gradient-to-br from-green-500 to-green-600 text-white border-0 shadow-lg">
                                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                                     <CardTitle className="text-sm font-medium opacity-90">Tax Paid</CardTitle>
                                     <CheckCircle className="h-5 w-5 opacity-80" />
@@ -221,7 +220,7 @@ export default function AdminPage() {
                                 </CardContent>
                             </Card>
 
-                            <Card className="bg-gradient-to-br from-red-500 to-red-600 text-white border-0 shadow-xl">
+                            <Card className="bg-gradient-to-br from-red-500 to-red-600 text-white border-0 shadow-lg">
                                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                                     <CardTitle className="text-sm font-medium opacity-90">Tax Unpaid</CardTitle>
                                     <XCircle className="h-5 w-5 opacity-80" />
@@ -232,23 +231,23 @@ export default function AdminPage() {
                                 </CardContent>
                             </Card>
 
-                            <Card className="bg-gradient-to-br from-purple-500 to-purple-600 text-white border-0 shadow-xl">
+                            <Card className="bg-gradient-to-br from-purple-500 to-purple-600 text-white border-0 shadow-lg">
                                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                                    <CardTitle className="text-sm font-medium opacity-90">Active Users</CardTitle>
-                                    <Users className="h-5 w-5 opacity-80" />
+                                    <CardTitle className="text-sm font-medium opacity-90">Compliance Rate</CardTitle>
+                                    <TrendingUp className="h-5 w-5 opacity-80" />
                                 </CardHeader>
                                 <CardContent>
-                                    <div className="text-3xl font-bold">{activeUsers}</div>
-                                    <p className="text-xs opacity-80 mt-1">System users</p>
+                                    <div className="text-3xl font-bold">{complianceRate}%</div>
+                                    <p className="text-xs opacity-80 mt-1">Tax compliance</p>
                                 </CardContent>
                             </Card>
                         </div>
 
                         {/* Map View */}
-                        <Card className="shadow-xl border-0 bg-white/90 backdrop-blur-sm">
-                            <CardHeader className="bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-t-lg">
-                                <CardTitle className="text-xl">Shop Locations Overview</CardTitle>
-                                <CardDescription className="text-blue-100">
+                        <Card className="shadow-lg border-0 bg-white">
+                            <CardHeader className="border-b border-gray-100">
+                                <CardTitle className="text-xl text-gray-900">Shop Locations Overview</CardTitle>
+                                <CardDescription className="text-gray-600">
                                     Interactive map showing all registered shops with real-time tax status
                                 </CardDescription>
                             </CardHeader>
@@ -280,10 +279,10 @@ export default function AdminPage() {
 
                 {/* Shops Tab */}
                 {activeTab === "shops" && (
-                    <Card className="shadow-xl border-0 bg-white/90 backdrop-blur-sm">
-                        <CardHeader className="bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-t-lg">
-                            <CardTitle className="text-xl">Shop Management</CardTitle>
-                            <CardDescription className="text-blue-100">
+                    <Card className="shadow-lg border-0 bg-white">
+                        <CardHeader className="border-b border-gray-100">
+                            <CardTitle className="text-xl text-gray-900">Shop Management</CardTitle>
+                            <CardDescription className="text-gray-600">
                                 Manage all registered shops and their tax status
                             </CardDescription>
                         </CardHeader>
@@ -336,7 +335,7 @@ export default function AdminPage() {
                                                     <TableCell>
                                                         <Badge
                                                             variant={shop.taxStatus === "paid" ? "default" : "destructive"}
-                                                            className={shop.taxStatus === "paid" ? "bg-green-100 text-green-800" : "bg-red-100 text-red-800"}
+                                                            className={`${shop.taxStatus === "paid" ? "bg-green-100 text-green-800 border-green-200" : "bg-red-100 text-red-800 border-red-200"} border`}
                                                         >
                                                             {shop.taxStatus === "paid" ? "✅ Paid" : "❌ Unpaid"}
                                                         </Badge>
@@ -392,10 +391,10 @@ export default function AdminPage() {
 
                 {/* Users Tab */}
                 {activeTab === "users" && (
-                    <Card className="shadow-xl border-0 bg-white/90 backdrop-blur-sm">
-                        <CardHeader className="bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-t-lg">
-                            <CardTitle className="text-xl">User Management</CardTitle>
-                            <CardDescription className="text-blue-100">
+                    <Card className="shadow-lg border-0 bg-white">
+                        <CardHeader className="border-b border-gray-100">
+                            <CardTitle className="text-xl text-gray-900">User Management</CardTitle>
+                            <CardDescription className="text-gray-600">
                                 Manage all system users and their roles
                             </CardDescription>
                         </CardHeader>
