@@ -68,7 +68,7 @@ export default function AdminPage() {
     useEffect(() => {
         if (!loading && (!user || userRole !== "admin")) {
             router.push("/auth/login")
-        }
+        } else if (user && userRole === "shop_owner") router.push("/dashboard")
     }, [user, userRole, loading, router])
 
     useEffect(() => {
@@ -200,8 +200,8 @@ export default function AdminPage() {
                             key={tab.id}
                             onClick={() => setActiveTab(tab.id as any)}
                             className={`flex items-center space-x-3 px-8 py-4 rounded-xl font-bold transition-all text-lg ${activeTab === tab.id
-                                    ? "bg-gradient-to-r from-blue-600 to-indigo-700 text-white shadow-lg"
-                                    : "text-slate-600 hover:text-slate-800 hover:bg-slate-50"
+                                ? "bg-gradient-to-r from-blue-600 to-indigo-700 text-white shadow-lg"
+                                : "text-slate-600 hover:text-slate-800 hover:bg-slate-50"
                                 }`}
                         >
                             <tab.icon className="h-5 w-5" />
