@@ -16,7 +16,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { toast } from "sonner"
 import { MapComponent } from "@/components/map-component"
 import { AddressSearch } from "@/components/address-search"
-import { ArrowLeft, Upload, Store, User, Phone, MapPin, Camera, Building2 } from 'lucide-react'
+import { ArrowLeft, Upload, Store, User, Phone, MapPin, Camera, Building2, Loader2 } from "lucide-react"
 import Link from "next/link"
 
 interface UserData {
@@ -45,6 +45,7 @@ export default function RegisterShopPage() {
     const [userData, setUserData] = useState<UserData | null>(null)
     const [mapCenter, setMapCenter] = useState({ lat: 24.8607, lng: 67.0011 }) // Default to Karachi
     const [mapZoom, setMapZoom] = useState(10)
+    const [addressSearchValue, setAddressSearchValue] = useState("")
 
     useEffect(() => {
         if (user) {
@@ -91,7 +92,13 @@ export default function RegisterShopPage() {
         setMapCenter({ lat: addressData.lat, lng: addressData.lng })
         setMapZoom(15)
         setFormData({ ...formData, address: addressData.address })
+        setAddressSearchValue(addressData.address)
         toast.success("Location selected from address search!")
+    }
+
+    const handleAddressChange = (value: string) => {
+        setAddressSearchValue(value)
+        setFormData({ ...formData, address: value })
     }
 
     const handleSubmit = async (e: React.FormEvent) => {
@@ -140,56 +147,57 @@ export default function RegisterShopPage() {
     }
 
     return (
-        <div className="min-h-screen bg-gray-50">
-            <header className="bg-white shadow-sm border-b border-gray-200">
-                <div className="container mx-auto px-4 py-4">
-                    <div className="flex items-center space-x-4">
-                        <Button asChild variant="ghost" size="sm" className="hover:bg-blue-50">
+        <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50">
+            <header className="bg-white/95 backdrop-blur-sm shadow-lg border-b border-slate-200">
+                <div className="container mx-auto px-4 py-6">
+                    <div className="flex items-center space-x-6">
+                        <Button asChild variant="ghost" size="lg" className="hover:bg-blue-50 text-slate-600 hover:text-blue-600">
                             <Link href="/dashboard">
-                                <ArrowLeft className="h-4 w-4 mr-2" />
+                                <ArrowLeft className="h-5 w-5 mr-2" />
                                 Back to Dashboard
                             </Link>
                         </Button>
-                        <div className="flex items-center space-x-3">
-                            <div className="w-10 h-10 bg-gradient-to-br from-blue-600 to-purple-600 rounded-xl flex items-center justify-center">
-                                <Building2 className="h-6 w-6 text-white" />
+                        <div className="flex items-center space-x-4">
+                            <div className="w-14 h-14 bg-gradient-to-br from-blue-600 to-indigo-700 rounded-2xl flex items-center justify-center shadow-lg">
+                                <Building2 className="h-8 w-8 text-white" />
                             </div>
                             <div>
-                                <h1 className="text-2xl font-bold text-gray-900">Register New Shop</h1>
-                                <p className="text-sm text-gray-600">Add your business to the tax management system</p>
+                                <h1 className="text-3xl font-bold text-slate-900">Register New Shop</h1>
+                                <p className="text-slate-600 text-lg">Add your business to the tax management system</p>
                             </div>
                         </div>
                     </div>
                 </div>
             </header>
 
-            <main className="container mx-auto px-4 py-8">
-                <div className="max-w-4xl mx-auto">
-                    <Card className="shadow-lg border-0 bg-white">
-                        <CardHeader className="border-b border-gray-100">
-                            <div className="flex items-center space-x-3">
-                                <div className="w-12 h-12 bg-gradient-to-br from-blue-100 to-purple-100 rounded-xl flex items-center justify-center">
-                                    <Store className="h-6 w-6 text-blue-600" />
+            <main className="container mx-auto px-4 py-12">
+                <div className="max-w-5xl mx-auto">
+                    <Card className="shadow-2xl border-0 bg-white/95 backdrop-blur-sm">
+                        <CardHeader className="border-b border-slate-100 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-t-2xl">
+                            <div className="flex items-center space-x-4">
+                                <div className="w-16 h-16 bg-gradient-to-br from-blue-100 to-indigo-100 rounded-2xl flex items-center justify-center shadow-lg">
+                                    <Store className="h-8 w-8 text-blue-600" />
                                 </div>
                                 <div>
-                                    <CardTitle className="text-2xl text-gray-900">Shop Registration Form</CardTitle>
-                                    <CardDescription className="text-gray-600">
+                                    <CardTitle className="text-3xl text-slate-900">Shop Registration Form</CardTitle>
+                                    <CardDescription className="text-slate-600 text-lg mt-2">
                                         Fill in the details below to register your shop
                                         {userData && (
-                                            <span className="block mt-1 text-blue-600">
-                                                📍 Default location: {userData.city ? `${userData.city}, ` : ""}{userData.countryName || "Karachi, Pakistan"}
+                                            <span className="block mt-2 text-blue-600 font-semibold">
+                                                📍 Default location: {userData.city ? `${userData.city}, ` : ""}
+                                                {userData.countryName || "Karachi, Pakistan"}
                                             </span>
                                         )}
                                     </CardDescription>
                                 </div>
                             </div>
                         </CardHeader>
-                        <CardContent className="p-8">
-                            <form onSubmit={handleSubmit} className="space-y-8">
-                                <div className="grid md:grid-cols-2 gap-6">
-                                    <div className="space-y-2">
-                                        <Label htmlFor="shopName" className="text-sm font-semibold text-gray-700 flex items-center">
-                                            <Store className="h-4 w-4 mr-2 text-blue-600" />
+                        <CardContent className="p-10">
+                            <form onSubmit={handleSubmit} className="space-y-10">
+                                <div className="grid md:grid-cols-2 gap-8">
+                                    <div className="space-y-3">
+                                        <Label htmlFor="shopName" className="text-lg font-bold text-slate-700 flex items-center">
+                                            <Store className="h-5 w-5 mr-3 text-blue-600" />
                                             Shop Name
                                         </Label>
                                         <Input
@@ -197,13 +205,13 @@ export default function RegisterShopPage() {
                                             placeholder="Enter your shop name"
                                             value={formData.shopName}
                                             onChange={(e) => setFormData({ ...formData, shopName: e.target.value })}
-                                            className="h-12 border-gray-200 focus:border-blue-500 focus:ring-blue-500"
+                                            className="h-14 border-2 border-slate-200 focus:border-blue-500 focus:ring-blue-500 rounded-xl text-lg shadow-lg"
                                             required
                                         />
                                     </div>
-                                    <div className="space-y-2">
-                                        <Label htmlFor="ownerName" className="text-sm font-semibold text-gray-700 flex items-center">
-                                            <User className="h-4 w-4 mr-2 text-blue-600" />
+                                    <div className="space-y-3">
+                                        <Label htmlFor="ownerName" className="text-lg font-bold text-slate-700 flex items-center">
+                                            <User className="h-5 w-5 mr-3 text-blue-600" />
                                             Owner Name
                                         </Label>
                                         <Input
@@ -211,15 +219,15 @@ export default function RegisterShopPage() {
                                             placeholder="Enter owner's full name"
                                             value={formData.ownerName}
                                             onChange={(e) => setFormData({ ...formData, ownerName: e.target.value })}
-                                            className="h-12 border-gray-200 focus:border-blue-500 focus:ring-blue-500"
+                                            className="h-14 border-2 border-slate-200 focus:border-blue-500 focus:ring-blue-500 rounded-xl text-lg shadow-lg"
                                             required
                                         />
                                     </div>
                                 </div>
 
-                                <div className="space-y-2">
-                                    <Label htmlFor="contactNumber" className="text-sm font-semibold text-gray-700 flex items-center">
-                                        <Phone className="h-4 w-4 mr-2 text-blue-600" />
+                                <div className="space-y-3">
+                                    <Label htmlFor="contactNumber" className="text-lg font-bold text-slate-700 flex items-center">
+                                        <Phone className="h-5 w-5 mr-3 text-blue-600" />
                                         Contact Number
                                     </Label>
                                     <Input
@@ -228,94 +236,112 @@ export default function RegisterShopPage() {
                                         placeholder="Enter contact number"
                                         value={formData.contactNumber}
                                         onChange={(e) => setFormData({ ...formData, contactNumber: e.target.value })}
-                                        className="h-12 border-gray-200 focus:border-blue-500 focus:ring-blue-500"
+                                        className="h-14 border-2 border-slate-200 focus:border-blue-500 focus:ring-blue-500 rounded-xl text-lg shadow-lg"
                                         required
                                     />
                                 </div>
 
-                                <div className="space-y-4">
-                                    <Label className="text-sm font-semibold text-gray-700 flex items-center">
-                                        <MapPin className="h-4 w-4 mr-2 text-blue-600" />
+                                <div className="space-y-6">
+                                    <Label className="text-lg font-bold text-slate-700 flex items-center">
+                                        <MapPin className="h-5 w-5 mr-3 text-blue-600" />
                                         Shop Address & Location
                                     </Label>
 
                                     {/* Address Search */}
-                                    <div className="space-y-2">
-                                        <Label htmlFor="addressSearch" className="text-sm text-gray-600">
-                                            Search for your shop address (e.g., "Orangi Town Karachi" or "Times Square New York")
+                                    <div className="space-y-3">
+                                        <Label htmlFor="addressSearch" className="text-base text-slate-600 font-semibold">
+                                            🔍 Search for your shop address (e.g., "Tariq Road Karachi" or "Times Square New York")
                                         </Label>
                                         <AddressSearch
                                             onLocationSelect={handleAddressSelect}
-                                            placeholder="Type your shop address to search..."
+                                            placeholder="Type your shop address to search and auto-locate on map..."
                                             className="w-full"
+                                            value={addressSearchValue}
+                                            onChange={handleAddressChange}
                                         />
                                     </div>
 
                                     {/* Manual Address Input */}
-                                    <div className="space-y-2">
-                                        <Label htmlFor="address" className="text-sm text-gray-600">
-                                            Or enter address manually
+                                    <div className="space-y-3">
+                                        <Label htmlFor="address" className="text-base text-slate-600 font-semibold">
+                                            📝 Or enter/edit address manually
                                         </Label>
                                         <Textarea
                                             id="address"
                                             placeholder="Enter complete shop address"
                                             value={formData.address}
-                                            onChange={(e) => setFormData({ ...formData, address: e.target.value })}
-                                            rows={3}
-                                            className="border-gray-200 focus:border-blue-500 focus:ring-blue-500 resize-none"
+                                            onChange={(e) => {
+                                                setFormData({ ...formData, address: e.target.value })
+                                                setAddressSearchValue(e.target.value)
+                                            }}
+                                            rows={4}
+                                            className="border-2 border-slate-200 focus:border-blue-500 focus:ring-blue-500 resize-none rounded-xl text-lg shadow-lg"
                                             required
                                         />
                                     </div>
                                 </div>
 
-                                <div className="space-y-2">
-                                    <Label htmlFor="image" className="text-sm font-semibold text-gray-700 flex items-center">
-                                        <Camera className="h-4 w-4 mr-2 text-blue-600" />
+                                <div className="space-y-3">
+                                    <Label htmlFor="image" className="text-lg font-bold text-slate-700 flex items-center">
+                                        <Camera className="h-5 w-5 mr-3 text-blue-600" />
                                         Shop Photo (Optional)
                                     </Label>
-                                    <div className="flex items-center space-x-3 p-4 border-2 border-dashed border-gray-300 rounded-xl hover:border-blue-400 transition-colors">
+                                    <div className="flex items-center space-x-4 p-6 border-2 border-dashed border-slate-300 rounded-2xl hover:border-blue-400 transition-colors bg-slate-50">
                                         <Input
                                             id="image"
                                             type="file"
                                             accept="image/*"
                                             onChange={(e) => setImage(e.target.files?.[0] || null)}
-                                            className="flex-1 border-0 p-0 h-auto"
+                                            className="flex-1 border-0 p-0 h-auto bg-transparent text-lg"
                                         />
-                                        <Upload className="h-5 w-5 text-gray-400" />
+                                        <Upload className="h-6 w-6 text-slate-400" />
                                     </div>
                                     {image && (
-                                        <p className="text-sm text-green-600 font-medium">✅ Image selected: {image.name}</p>
+                                        <p className="text-base text-emerald-600 font-bold flex items-center">
+                                            ✅ Image selected: {image.name}
+                                        </p>
                                     )}
                                 </div>
 
-                                <div className="space-y-4">
-                                    <Label className="text-sm font-semibold text-gray-700 flex items-center">
-                                        <MapPin className="h-4 w-4 mr-2 text-blue-600" />
+                                <div className="space-y-6">
+                                    <Label className="text-lg font-bold text-slate-700 flex items-center">
+                                        <MapPin className="h-5 w-5 mr-3 text-blue-600" />
                                         Confirm Shop Location on Map *
                                     </Label>
-                                    <p className="text-sm text-gray-600">
-                                        The map will automatically update when you search for an address above. You can also click directly on the map to set your location.
-                                    </p>
+                                    <div className="p-6 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-2xl border-2 border-blue-200">
+                                        <p className="text-base text-blue-800 font-semibold mb-2">🗺️ Interactive Map Instructions:</p>
+                                        <ul className="text-sm text-blue-700 space-y-1">
+                                            <li>• The map automatically updates when you search for an address above</li>
+                                            <li>• You can also click directly on the map to set your location</li>
+                                            <li>• Use the "Get Location" button to use your current GPS location</li>
+                                        </ul>
+                                    </div>
                                     <MapComponent
                                         onLocationSelect={setLocation}
                                         selectedLocation={location}
                                         center={mapCenter}
                                         zoom={mapZoom}
-                                        height="450px"
+                                        height="500px"
                                         showCurrentLocation={true}
                                     />
                                     {location && (
-                                        <div className="p-4 bg-green-50 border border-green-200 rounded-xl">
-                                            <p className="text-sm text-green-700 font-semibold flex items-center">
-                                                <MapPin className="h-4 w-4 mr-2" />
-                                                Location confirmed: {location.lat.toFixed(6)}, {location.lng.toFixed(6)}
+                                        <div className="p-6 bg-gradient-to-r from-emerald-50 to-green-50 border-2 border-emerald-200 rounded-2xl shadow-lg">
+                                            <p className="text-lg text-emerald-700 font-bold flex items-center">
+                                                <MapPin className="h-6 w-6 mr-3" />✅ Location confirmed: {location.lat.toFixed(6)},{" "}
+                                                {location.lng.toFixed(6)}
+                                            </p>
+                                            <p className="text-sm text-emerald-600 mt-2">
+                                                Your shop location has been successfully set on the map!
                                             </p>
                                         </div>
                                     )}
                                     {!location && (
-                                        <div className="p-4 bg-yellow-50 border border-yellow-200 rounded-xl">
-                                            <p className="text-sm text-yellow-700 font-medium flex items-center">
-                                                <MapPin className="h-4 w-4 mr-2" />
+                                        <div className="p-6 bg-gradient-to-r from-yellow-50 to-orange-50 border-2 border-yellow-200 rounded-2xl shadow-lg">
+                                            <p className="text-lg text-yellow-700 font-bold flex items-center">
+                                                <MapPin className="h-6 w-6 mr-3" />
+                                                ⚠️ Location Required
+                                            </p>
+                                            <p className="text-sm text-yellow-600 mt-2">
                                                 Please search for an address above or click on the map to select your shop's location
                                             </p>
                                         </div>
@@ -324,17 +350,17 @@ export default function RegisterShopPage() {
 
                                 <Button
                                     type="submit"
-                                    className="w-full h-14 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-semibold rounded-xl shadow-lg hover:shadow-xl transition-all duration-200 text-lg"
+                                    className="w-full h-16 bg-gradient-to-r from-blue-600 to-indigo-700 hover:from-blue-700 hover:to-indigo-800 text-white font-bold rounded-2xl shadow-xl hover:shadow-2xl transition-all duration-200 text-xl"
                                     disabled={loading}
                                 >
                                     {loading ? (
                                         <div className="flex items-center">
-                                            <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-white mr-3"></div>
+                                            <Loader2 className="h-7 w-7 mr-3 animate-spin" />
                                             Registering Shop...
                                         </div>
                                     ) : (
                                         <>
-                                            <Store className="h-5 w-5 mr-2" />
+                                            <Store className="h-6 w-6 mr-3" />
                                             Register Shop
                                         </>
                                     )}

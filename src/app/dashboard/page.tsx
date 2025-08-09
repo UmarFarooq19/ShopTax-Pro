@@ -8,7 +8,19 @@ import { db } from "@/lib/firebase"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
-import { Store, MapPin, Phone, User, Plus, LogOut, BarChart3, CheckCircle, XCircle, Building2, TrendingUp } from 'lucide-react'
+import {
+    Store,
+    MapPin,
+    Phone,
+    User,
+    Plus,
+    LogOut,
+    CheckCircle,
+    XCircle,
+    Building2,
+    TrendingUp,
+    Loader2,
+} from "lucide-react"
 import Link from "next/link"
 import { signOut } from "firebase/auth"
 import { auth } from "@/lib/firebase"
@@ -75,40 +87,45 @@ export default function DashboardPage() {
 
     if (loading || !user) {
         return (
-            <div className="min-h-screen flex items-center justify-center bg-gray-50">
+            <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-50 to-blue-50">
                 <div className="text-center">
-                    <div className="animate-spin rounded-full h-16 w-16 border-b-4 border-blue-600 mx-auto mb-4"></div>
-                    <p className="text-gray-600 font-medium">Loading your dashboard...</p>
+                    <Loader2 className="h-20 w-20 text-blue-600 mx-auto mb-6 animate-spin" />
+                    <p className="text-slate-600 font-semibold text-xl">Loading your dashboard...</p>
+                    <p className="text-slate-500 text-sm mt-2">Please wait while we prepare your workspace</p>
                 </div>
             </div>
         )
     }
 
-    const paidShops = shops.filter(shop => shop.taxStatus === "paid").length
-    const unpaidShops = shops.filter(shop => shop.taxStatus === "unpaid").length
+    const paidShops = shops.filter((shop) => shop.taxStatus === "paid").length
+    const unpaidShops = shops.filter((shop) => shop.taxStatus === "unpaid").length
     const complianceRate = shops.length > 0 ? Math.round((paidShops / shops.length) * 100) : 0
 
     return (
-        <div className="min-h-screen bg-gray-50">
-            <header className="bg-white shadow-sm border-b border-gray-200">
-                <div className="container mx-auto px-4 py-4">
+        <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50">
+            <header className="bg-white/95 backdrop-blur-sm shadow-xl border-b border-slate-200">
+                <div className="container mx-auto px-4 py-6">
                     <div className="flex justify-between items-center">
-                        <div className="flex items-center space-x-4">
-                            <div className="w-12 h-12 bg-gradient-to-br from-blue-600 to-purple-600 rounded-xl flex items-center justify-center">
-                                <Building2 className="h-7 w-7 text-white" />
+                        <div className="flex items-center space-x-6">
+                            <div className="w-16 h-16 bg-gradient-to-br from-blue-600 to-indigo-700 rounded-2xl flex items-center justify-center shadow-lg">
+                                <Building2 className="h-9 w-9 text-white" />
                             </div>
                             <div>
-                                <h1 className="text-2xl font-bold text-gray-900">Shop Owner Dashboard</h1>
-                                <p className="text-gray-600">Manage your business operations</p>
+                                <h1 className="text-3xl font-bold text-slate-900">Shop Owner Dashboard</h1>
+                                <p className="text-slate-600 text-lg">Manage your business operations</p>
                             </div>
                         </div>
-                        <div className="flex items-center space-x-4">
+                        <div className="flex items-center space-x-6">
                             <div className="text-right">
-                                <p className="text-sm text-gray-500">Welcome back</p>
-                                <p className="text-sm font-medium text-gray-900">{user.email}</p>
+                                <p className="text-sm text-slate-500 font-medium">Welcome back</p>
+                                <p className="text-lg font-bold text-slate-900">{user.email}</p>
                             </div>
-                            <Button onClick={handleLogout} variant="outline" className="hover:bg-red-50 hover:text-red-600 hover:border-red-200">
-                                <LogOut className="h-4 w-4 mr-2" />
+                            <Button
+                                onClick={handleLogout}
+                                variant="outline"
+                                className="hover:bg-red-50 hover:text-red-600 hover:border-red-200 h-12 px-6 font-semibold bg-transparent"
+                            >
+                                <LogOut className="h-5 w-5 mr-2" />
                                 Logout
                             </Button>
                         </div>
@@ -116,142 +133,154 @@ export default function DashboardPage() {
                 </div>
             </header>
 
-            <main className="container mx-auto px-4 py-8">
+            <main className="container mx-auto px-4 py-12">
                 {/* Statistics Cards */}
-                <div className="grid md:grid-cols-4 gap-6 mb-8">
-                    <Card className="border-0 shadow-lg bg-gradient-to-br from-blue-500 to-blue-600 text-white">
+                <div className="grid md:grid-cols-4 gap-8 mb-12">
+                    <Card className="border-0 shadow-xl bg-gradient-to-br from-blue-500 to-blue-600 text-white transform hover:scale-105 transition-all">
                         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                             <CardTitle className="text-sm font-medium opacity-90">Total Shops</CardTitle>
-                            <Store className="h-5 w-5 opacity-80" />
+                            <Store className="h-6 w-6 opacity-80" />
                         </CardHeader>
                         <CardContent>
-                            <div className="text-3xl font-bold">{shops.length}</div>
+                            <div className="text-4xl font-bold">{shops.length}</div>
                             <p className="text-xs opacity-80 mt-1">Registered businesses</p>
                         </CardContent>
                     </Card>
 
-                    <Card className="border-0 shadow-lg bg-gradient-to-br from-green-500 to-green-600 text-white">
+                    <Card className="border-0 shadow-xl bg-gradient-to-br from-emerald-500 to-emerald-600 text-white transform hover:scale-105 transition-all">
                         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                             <CardTitle className="text-sm font-medium opacity-90">Tax Paid</CardTitle>
-                            <CheckCircle className="h-5 w-5 opacity-80" />
+                            <CheckCircle className="h-6 w-6 opacity-80" />
                         </CardHeader>
                         <CardContent>
-                            <div className="text-3xl font-bold">{paidShops}</div>
+                            <div className="text-4xl font-bold">{paidShops}</div>
                             <p className="text-xs opacity-80 mt-1">Compliant shops</p>
                         </CardContent>
                     </Card>
 
-                    <Card className="border-0 shadow-lg bg-gradient-to-br from-red-500 to-red-600 text-white">
+                    <Card className="border-0 shadow-xl bg-gradient-to-br from-red-500 to-red-600 text-white transform hover:scale-105 transition-all">
                         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                             <CardTitle className="text-sm font-medium opacity-90">Tax Pending</CardTitle>
-                            <XCircle className="h-5 w-5 opacity-80" />
+                            <XCircle className="h-6 w-6 opacity-80" />
                         </CardHeader>
                         <CardContent>
-                            <div className="text-3xl font-bold">{unpaidShops}</div>
+                            <div className="text-4xl font-bold">{unpaidShops}</div>
                             <p className="text-xs opacity-80 mt-1">Needs attention</p>
                         </CardContent>
                     </Card>
 
-                    <Card className="border-0 shadow-lg bg-gradient-to-br from-purple-500 to-purple-600 text-white">
+                    <Card className="border-0 shadow-xl bg-gradient-to-br from-purple-500 to-purple-600 text-white transform hover:scale-105 transition-all">
                         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                             <CardTitle className="text-sm font-medium opacity-90">Compliance Rate</CardTitle>
-                            <TrendingUp className="h-5 w-5 opacity-80" />
+                            <TrendingUp className="h-6 w-6 opacity-80" />
                         </CardHeader>
                         <CardContent>
-                            <div className="text-3xl font-bold">{complianceRate}%</div>
+                            <div className="text-4xl font-bold">{complianceRate}%</div>
                             <p className="text-xs opacity-80 mt-1">Tax compliance</p>
                         </CardContent>
                     </Card>
                 </div>
 
                 {/* Main Content */}
-                <div className="flex justify-between items-center mb-8">
+                <div className="flex justify-between items-center mb-12">
                     <div>
-                        <h2 className="text-3xl font-bold text-gray-900">My Shops</h2>
-                        <p className="text-gray-600 mt-1 text-lg">Manage and monitor your registered businesses</p>
+                        <h2 className="text-4xl font-bold text-slate-900">My Shops</h2>
+                        <p className="text-slate-600 mt-2 text-xl">Manage and monitor your registered businesses</p>
                     </div>
-                    <Button asChild className="h-12 px-6 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-semibold shadow-lg hover:shadow-xl transition-all duration-200">
+                    <Button
+                        asChild
+                        className="h-14 px-8 bg-gradient-to-r from-blue-600 to-indigo-700 hover:from-blue-700 hover:to-indigo-800 text-white font-bold shadow-xl hover:shadow-2xl transition-all duration-200 text-lg"
+                    >
                         <Link href="/shop/register">
-                            <Plus className="h-5 w-5 mr-2" />
+                            <Plus className="h-6 w-6 mr-3" />
                             Register New Shop
                         </Link>
                     </Button>
                 </div>
 
                 {loadingShops ? (
-                    <div className="flex justify-center py-20">
+                    <div className="flex justify-center py-24">
                         <div className="text-center">
-                            <div className="animate-spin rounded-full h-16 w-16 border-b-4 border-blue-600 mx-auto mb-4"></div>
-                            <p className="text-gray-600 font-medium">Loading your shops...</p>
+                            <Loader2 className="h-20 w-20 text-blue-600 mx-auto mb-6 animate-spin" />
+                            <p className="text-slate-600 font-semibold text-xl">Loading your shops...</p>
+                            <p className="text-slate-500 text-sm mt-2">Please wait while we fetch your business data</p>
                         </div>
                     </div>
                 ) : shops.length === 0 ? (
-                    <Card className="text-center py-20 shadow-lg border-0 bg-white">
+                    <Card className="text-center py-24 shadow-2xl border-0 bg-white/95 backdrop-blur-sm">
                         <CardContent>
-                            <div className="mx-auto w-24 h-24 bg-gray-100 rounded-full flex items-center justify-center mb-6">
-                                <Store className="h-12 w-12 text-gray-400" />
+                            <div className="mx-auto w-32 h-32 bg-gradient-to-br from-slate-100 to-slate-200 rounded-full flex items-center justify-center mb-8 shadow-lg">
+                                <Store className="h-16 w-16 text-slate-400" />
                             </div>
-                            <h3 className="text-2xl font-bold text-gray-900 mb-4">No shops registered yet</h3>
-                            <p className="text-gray-600 mb-8 text-lg max-w-md mx-auto">
+                            <h3 className="text-3xl font-bold text-slate-900 mb-6">No shops registered yet</h3>
+                            <p className="text-slate-600 mb-10 text-xl max-w-md mx-auto">
                                 Start your journey by registering your first business with our platform
                             </p>
-                            <Button asChild className="h-12 px-8 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-semibold shadow-lg hover:shadow-xl transition-all duration-200">
+                            <Button
+                                asChild
+                                className="h-14 px-10 bg-gradient-to-r from-blue-600 to-indigo-700 hover:from-blue-700 hover:to-indigo-800 text-white font-bold shadow-xl hover:shadow-2xl transition-all duration-200 text-lg"
+                            >
                                 <Link href="/shop/register">
-                                    <Plus className="h-5 w-5 mr-2" />
+                                    <Plus className="h-6 w-6 mr-3" />
                                     Register Your First Shop
                                 </Link>
                             </Button>
                         </CardContent>
                     </Card>
                 ) : (
-                    <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
                         {shops.map((shop) => (
-                            <Card key={shop.id} className="group hover:shadow-xl transition-all duration-300 border-0 shadow-lg hover:-translate-y-1 bg-white">
+                            <Card
+                                key={shop.id}
+                                className="group hover:shadow-2xl transition-all duration-300 border-0 shadow-xl hover:-translate-y-2 bg-white/95 backdrop-blur-sm"
+                            >
                                 {shop.imageUrl && (
-                                    <div className="h-48 bg-gray-100 rounded-t-lg overflow-hidden">
+                                    <div className="h-56 bg-gradient-to-br from-slate-100 to-slate-200 rounded-t-2xl overflow-hidden">
                                         <img
                                             src={shop.imageUrl || "/placeholder.svg"}
                                             alt={shop.shopName}
-                                            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                                            className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
                                         />
                                     </div>
                                 )}
-                                <CardHeader className="pb-3">
+                                <CardHeader className="pb-4">
                                     <div className="flex justify-between items-start">
-                                        <CardTitle className="text-xl font-bold text-gray-900 group-hover:text-blue-600 transition-colors">
+                                        <CardTitle className="text-2xl font-bold text-slate-900 group-hover:text-blue-600 transition-colors">
                                             {shop.shopName}
                                         </CardTitle>
                                         <Badge
                                             variant={shop.taxStatus === "paid" ? "default" : "destructive"}
-                                            className={`${shop.taxStatus === "paid" ? "bg-green-100 text-green-800 border-green-200" : "bg-red-100 text-red-800 border-red-200"} font-semibold border`}
+                                            className={`${shop.taxStatus === "paid" ? "bg-emerald-100 text-emerald-800 border-2 border-emerald-200" : "bg-red-100 text-red-800 border-2 border-red-200"} font-bold text-sm px-3 py-1`}
                                         >
                                             {shop.taxStatus === "paid" ? "✅ Paid" : "❌ Pending"}
                                         </Badge>
                                     </div>
                                 </CardHeader>
-                                <CardContent className="space-y-4">
-                                    <div className="flex items-center text-gray-600">
-                                        <div className="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center mr-3">
-                                            <User className="h-4 w-4 text-blue-600" />
+                                <CardContent className="space-y-5">
+                                    <div className="flex items-center text-slate-600">
+                                        <div className="w-10 h-10 bg-blue-100 rounded-xl flex items-center justify-center mr-4 shadow-md">
+                                            <User className="h-5 w-5 text-blue-600" />
                                         </div>
-                                        <span className="font-medium">{shop.ownerName}</span>
+                                        <span className="font-semibold text-lg">{shop.ownerName}</span>
                                     </div>
-                                    <div className="flex items-center text-gray-600">
-                                        <div className="w-8 h-8 bg-green-100 rounded-lg flex items-center justify-center mr-3">
-                                            <Phone className="h-4 w-4 text-green-600" />
+                                    <div className="flex items-center text-slate-600">
+                                        <div className="w-10 h-10 bg-emerald-100 rounded-xl flex items-center justify-center mr-4 shadow-md">
+                                            <Phone className="h-5 w-5 text-emerald-600" />
                                         </div>
-                                        <span>{shop.contactNumber}</span>
+                                        <span className="text-lg">{shop.contactNumber}</span>
                                     </div>
-                                    <div className="flex items-start text-gray-600">
-                                        <div className="w-8 h-8 bg-purple-100 rounded-lg flex items-center justify-center mr-3 mt-0.5">
-                                            <MapPin className="h-4 w-4 text-purple-600" />
+                                    <div className="flex items-start text-slate-600">
+                                        <div className="w-10 h-10 bg-purple-100 rounded-xl flex items-center justify-center mr-4 mt-1 shadow-md">
+                                            <MapPin className="h-5 w-5 text-purple-600" />
                                         </div>
-                                        <span className="line-clamp-2 text-sm">{shop.address}</span>
+                                        <span className="line-clamp-2 text-base">{shop.address}</span>
                                     </div>
-                                    <Button asChild variant="outline" className="w-full mt-4 hover:bg-blue-50 hover:text-blue-600 hover:border-blue-300 transition-all duration-200">
-                                        <Link href={`/shop/${shop.id}`}>
-                                            View Details
-                                        </Link>
+                                    <Button
+                                        asChild
+                                        variant="outline"
+                                        className="w-full mt-6 h-12 hover:bg-blue-50 hover:text-blue-600 hover:border-blue-300 transition-all duration-200 font-semibold text-lg border-2 bg-transparent"
+                                    >
+                                        <Link href={`/shop/${shop.id}`}>View Details</Link>
                                     </Button>
                                 </CardContent>
                             </Card>

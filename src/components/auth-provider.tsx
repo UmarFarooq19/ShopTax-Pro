@@ -44,7 +44,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
                         // Get user role from Firestore
                         const userDoc = await getDoc(doc(db, "users", user.uid))
                         if (userDoc.exists()) {
-                            setUserRole(userDoc.data().role || "shop_owner")
+                            const userData = userDoc.data()
+                            setUserRole(userData.role || "shop_owner")
                         } else {
                             setUserRole("shop_owner")
                         }
