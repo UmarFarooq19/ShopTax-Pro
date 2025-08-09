@@ -188,7 +188,7 @@ export default function AdminPage() {
                 </div>
             </header>
 
-            <main className="container mx-auto px-4 py-12">
+            <main className="container mx-auto px-12 py-12">
                 {/* Navigation Tabs */}
                 <div className="flex space-x-2 mb-12 bg-white p-2 rounded-2xl w-fit shadow-xl border-2 border-slate-200">
                     {[
@@ -354,7 +354,7 @@ export default function AdminPage() {
                                                             variant={shop.taxStatus === "paid" ? "default" : "destructive"}
                                                             className={`${shop.taxStatus === "paid" ? "bg-emerald-100 text-emerald-800 border-2 border-emerald-200" : "bg-red-100 text-red-800 border-2 border-red-200"} font-bold text-sm px-3 py-1`}
                                                         >
-                                                            {shop.taxStatus === "paid" ? "✅ Paid" : "❌ Unpaid"}
+                                                            {shop.taxStatus === "paid" ? "Paid" : "Unpaid"}
                                                         </Badge>
                                                     </TableCell>
                                                     <TableCell>

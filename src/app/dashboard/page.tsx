@@ -48,9 +48,10 @@ export default function DashboardPage() {
     const [loadingShops, setLoadingShops] = useState(true)
 
     useEffect(() => {
-        if (!loading && (!user || userRole !== "shop_owner")) {
+        if (!loading && (!user)) {
             router.push("/auth/login")
         }
+        if (userRole === "admin") router.push("/admin")
     }, [user, userRole, loading, router])
 
     useEffect(() => {

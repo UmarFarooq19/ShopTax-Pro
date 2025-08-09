@@ -27,7 +27,7 @@ export default function LoginPage() {
         try {
             await signInWithEmailAndPassword(auth, email, password)
             toast.success("Welcome back! Logged in successfully")
-            router.push("/")
+            router.push("/dashboard")
         } catch (error: any) {
             toast.error("Invalid email or password. Please try again.")
         } finally {
