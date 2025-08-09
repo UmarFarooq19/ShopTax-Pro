@@ -134,7 +134,7 @@ export default function DashboardPage() {
                 </div>
             </header>
 
-            <main className="container mx-auto px-12 py-12">
+            <main className="container mx-auto lg:px-12 py-12">
                 {/* Statistics Cards */}
                 <div className="grid md:grid-cols-4 gap-8 mb-12">
                     <Card className="border-0 shadow-xl bg-gradient-to-br from-blue-500 to-blue-600 text-white transform hover:scale-105 transition-all">

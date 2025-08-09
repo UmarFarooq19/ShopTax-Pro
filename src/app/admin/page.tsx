@@ -188,7 +188,7 @@ export default function AdminPage() {
                 </div>
             </header>
 
-            <main className="container mx-auto px-12 py-12">
+            <main className="container mx-auto lg:px-12 py-12">
                 {/* Navigation Tabs */}
                 <div className="flex space-x-2 mb-12 bg-white p-2 rounded-2xl w-fit shadow-xl border-2 border-slate-200">
                     {[
