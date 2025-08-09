@@ -68,7 +68,7 @@ export default function AdminPage() {
     useEffect(() => {
         if (!loading && (!user || userRole !== "admin")) {
             router.push("/auth/login")
-        }
+        } else if (user && userRole === "shop_owner") router.push("/dashboard")
     }, [user, userRole, loading, router])
 
     useEffect(() => {
@@ -188,7 +188,7 @@ export default function AdminPage() {
                 </div>
             </header>
 
-            <main className="container mx-auto px-4 py-12">
+            <main className="container mx-auto px-12 py-12">
                 {/* Navigation Tabs */}
                 <div className="flex space-x-2 mb-12 bg-white p-2 rounded-2xl w-fit shadow-xl border-2 border-slate-200">
                     {[
@@ -200,8 +200,8 @@ export default function AdminPage() {
                             key={tab.id}
                             onClick={() => setActiveTab(tab.id as any)}
                             className={`flex items-center space-x-3 px-8 py-4 rounded-xl font-bold transition-all text-lg ${activeTab === tab.id
-                                    ? "bg-gradient-to-r from-blue-600 to-indigo-700 text-white shadow-lg"
-                                    : "text-slate-600 hover:text-slate-800 hover:bg-slate-50"
+                                ? "bg-gradient-to-r from-blue-600 to-indigo-700 text-white shadow-lg"
+                                : "text-slate-600 hover:text-slate-800 hover:bg-slate-50"
                                 }`}
                         >
                             <tab.icon className="h-5 w-5" />
@@ -354,7 +354,7 @@ export default function AdminPage() {
                                                             variant={shop.taxStatus === "paid" ? "default" : "destructive"}
                                                             className={`${shop.taxStatus === "paid" ? "bg-emerald-100 text-emerald-800 border-2 border-emerald-200" : "bg-red-100 text-red-800 border-2 border-red-200"} font-bold text-sm px-3 py-1`}
                                                         >
-                                                            {shop.taxStatus === "paid" ? "✅ Paid" : "❌ Unpaid"}
+                                                            {shop.taxStatus === "paid" ? "Paid" : "Unpaid"}
                                                         </Badge>
                                                     </TableCell>
                                                     <TableCell>
