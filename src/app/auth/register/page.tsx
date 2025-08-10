@@ -3,7 +3,7 @@
 import type React from "react"
 import { useState } from "react"
 import { useRouter } from "next/navigation"
-import { createUserWithEmailAndPassword, sendEmailVerification } from "firebase/auth"
+import { AuthError, createUserWithEmailAndPassword, sendEmailVerification } from "firebase/auth"
 import { doc, setDoc } from "firebase/firestore"
 import { auth, db } from "@/lib/firebase"
 import { Button } from "@/components/ui/button"
@@ -134,9 +134,9 @@ export default function RegisterPage() {
           },
           city: selectedCity
             ? {
-                lat: selectedCity.lat,
-                lng: selectedCity.lng,
-              }
+              lat: selectedCity.lat,
+              lng: selectedCity.lng,
+            }
             : null,
         },
         createdAt: new Date(),
@@ -152,13 +152,14 @@ export default function RegisterPage() {
 
       setShowSuccess(true)
       toast.success("Account created successfully! Please verify your email before logging in.")
-    } catch (error: any) {
+    } catch (error: unknown) {
+      const authError = error as AuthError;
       console.error("Registration error:", error)
-      if (error.code === "auth/email-already-in-use") {
+      if (authError.code === "auth/email-already-in-use") {
         toast.error("An account with this email already exists.")
-      } else if (error.code === "auth/weak-password") {
+      } else if (authError.code === "auth/weak-password") {
         toast.error("Password is too weak. Please choose a stronger password.")
-      } else if (error.code === "auth/invalid-email") {
+      } else if (authError.code === "auth/invalid-email") {
         toast.error("Please enter a valid email address.")
       } else {
         toast.error("Registration failed. Please try again.")
@@ -193,7 +194,7 @@ export default function RegisterPage() {
                   <div>
                     <h3 className="font-semibold text-green-800 mb-1">Verification Email Sent</h3>
                     <p className="text-sm text-green-700">
-                      We've sent a verification email to <strong>{formData.email}</strong>. Please check your inbox and
+                      We&apos;ve sent a verification email to <strong>{formData.email}</strong>. Please check your inbox and
                       click the verification link.
                     </p>
                   </div>
@@ -206,7 +207,7 @@ export default function RegisterPage() {
                   <div>
                     <h3 className="font-semibold text-blue-800 mb-1">Important Notes</h3>
                     <ul className="text-sm text-blue-700 space-y-1">
-                      <li>• Check your spam/junk folder if you don't see the email</li>
+                      <li>• Check your spam/junk folder if you don&apos;t see the email</li>
                       <li>• The verification link will expire in 24 hours</li>
                       <li>• You must verify your email before you can log in</li>
                     </ul>
@@ -350,7 +351,7 @@ export default function RegisterPage() {
                 <div className="flex items-center space-x-2">
                   <Mail className="h-4 w-4 text-blue-600" />
                   <p className="text-xs text-blue-700 font-medium">
-                    You'll need to verify your email address before you can log in.
+                    You&apos;ll need to verify your email address before you can log in.
                   </p>
                 </div>
               </div>
