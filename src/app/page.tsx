@@ -347,7 +347,7 @@ export default function HomePage() {
               </div>
             </div>
             <p className="text-slate-400 mb-6 text-lg">
-              The world's most trusted tax management platform for modern businesses
+              The world&apos;s most trusted tax management platform for modern businesses
             </p>
             <p className="text-slate-500 text-sm">
               © 2024 ShopTax Pro. All rights reserved. Built with ❤️ for businesses worldwide.
