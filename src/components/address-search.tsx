@@ -140,7 +140,7 @@ export function AddressSearch({
                             <MapPin className="h-8 w-8 text-slate-400" />
                         </div>
                         <p className="text-base font-medium">No locations found</p>
-                        <p className="text-sm mt-1">Try searching with a different term like "Tariq Road Karachi"</p>
+                        <p className="text-sm mt-1">Try searching with a different term like &quot;Tariq Road Karachi&quot;</p>
                     </CardContent>
                 </Card>
             )}
