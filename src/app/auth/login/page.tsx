@@ -11,7 +11,8 @@ import { Label } from "@/components/ui/label"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { toast } from "sonner"
 import Link from "next/link"
-import { Building2, Mail, Lock, AlertCircle, RefreshCw } from "lucide-react"
+import { Building2, Mail, Lock, AlertCircle, RefreshCw } from "lucide-react";
+import type { AuthError, User as FirebaseUser } from "firebase/auth"
 
 export default function LoginPage() {
     const [email, setEmail] = useState("")
@@ -19,7 +20,7 @@ export default function LoginPage() {
     const [loading, setLoading] = useState(false)
     const [sendingVerification, setSendingVerification] = useState(false)
     const [showVerificationPrompt, setShowVerificationPrompt] = useState(false)
-    const [unverifiedUser, setUnverifiedUser] = useState<any>(null)
+    const [unverifiedUser, setUnverifiedUser] = useState<FirebaseUser | null>(null)
     const router = useRouter()
 
     const handleLogin = async (e: React.FormEvent) => {
@@ -44,15 +45,16 @@ export default function LoginPage() {
 
             toast.success("Welcome back! Logged in successfully")
             router.push("/dashboard")
-        } catch (error: any) {
+        } catch (error: unknown) {
+            const authError = error as AuthError
             console.error("Login error:", error)
-            if (error.code === "auth/user-not-found") {
+            if (authError.code === "auth/user-not-found") {
                 toast.error("No account found with this email address.")
-            } else if (error.code === "auth/wrong-password") {
+            } else if (authError.code === "auth/wrong-password") {
                 toast.error("Incorrect password. Please try again.")
-            } else if (error.code === "auth/invalid-email") {
+            } else if (authError.code === "auth/invalid-email") {
                 toast.error("Please enter a valid email address.")
-            } else if (error.code === "auth/too-many-requests") {
+            } else if (authError.code === "auth/too-many-requests") {
                 toast.error("Too many failed attempts. Please try again later.")
             } else {
                 toast.error("Invalid email or password. Please try again.")
@@ -69,9 +71,10 @@ export default function LoginPage() {
         try {
             await sendEmailVerification(unverifiedUser)
             toast.success("Verification email sent! Please check your inbox and spam folder.")
-        } catch (error: any) {
+        } catch (error: unknown) {
+            const authError = error as AuthError
             console.error("Verification email error:", error)
-            if (error.code === "auth/too-many-requests") {
+            if (authError.code === "auth/too-many-requests") {
                 toast.error("Too many requests. Please wait before requesting another verification email.")
             } else {
                 toast.error("Failed to send verification email. Please try again.")
@@ -105,7 +108,7 @@ export default function LoginPage() {
                                     <div className="flex-1">
                                         <h3 className="font-semibold text-yellow-800 mb-1">Email Verification Required</h3>
                                         <p className="text-sm text-yellow-700 mb-3">
-                                            Your account exists but your email address hasn't been verified yet. Please check your email and
+                                            Your account exists but your email address hasn&apos;t been verified yet. Please check your email and
                                             click the verification link, or request a new one below.
                                         </p>
                                         <Button
@@ -189,7 +192,7 @@ export default function LoginPage() {
                         </div>
 
                         <div className="mt-6 text-center text-sm">
-                            <span className="text-gray-600">Don't have an account? </span>
+                            <span className="text-gray-600">Don&apos;t have an account? </span>
                             <Link href="/auth/register" className="text-blue-600 hover:text-blue-700 font-semibold hover:underline">
                                 Create one here
                             </Link>
