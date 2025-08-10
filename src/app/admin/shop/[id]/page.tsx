@@ -1,16 +1,18 @@
 "use client"
 
-import { useEffect, useState } from "react"
-import { useParams, useRouter } from "next/navigation"
-import { doc, getDoc } from "firebase/firestore"
-import { db } from "@/lib/firebase"
 import { useAuth } from "@/components/auth-provider"
+import { MapComponent } from "@/components/map-component"
+import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Badge } from "@/components/ui/badge"
-import { MapComponent } from "@/components/map-component"
-import { ArrowLeft, Store, User, Phone, MapPin, Calendar, Camera } from 'lucide-react'
+import { db } from "@/lib/firebase"
+import { doc, getDoc } from "firebase/firestore"
+import { ArrowLeft, Calendar, MapPin, Phone, Store, User } from 'lucide-react'
 import Link from "next/link"
+import { useParams, useRouter } from "next/navigation"
+import { useEffect, useState } from "react"
+import firebase from "firebase/compat/app"
+import Image from "next/image"
 
 interface Shop {
     id: string
@@ -24,8 +26,8 @@ interface Shop {
     }
     imageUrl?: string
     taxStatus: "paid" | "unpaid"
-    createdAt: any
-    updatedAt?: any
+    createdAt: firebase.firestore.Timestamp;
+    updatedAt?: firebase.firestore.Timestamp;
     userId: string
     userCountry?: string
     userCountryName?: string
@@ -35,7 +37,7 @@ interface Shop {
 export default function AdminShopDetailsPage() {
     const params = useParams()
     const router = useRouter()
-    const { user, userRole } = useAuth()
+    const { userRole } = useAuth()
     const [shop, setShop] = useState<Shop | null>(null)
     const [loading, setLoading] = useState(true)
 
@@ -139,10 +141,12 @@ export default function AdminShopDetailsPage() {
                             <CardContent className="p-6 space-y-6">
                                 {shop.imageUrl && (
                                     <div className="aspect-video rounded-xl overflow-hidden shadow-lg">
-                                        <img
+                                        <Image
                                             src={shop.imageUrl || "/placeholder.svg"}
                                             alt={shop.shopName}
                                             className="w-full h-full object-cover"
+                                            width={500}
+                                            height={500}
                                         />
                                     </div>
                                 )}
