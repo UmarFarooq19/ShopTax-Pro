@@ -139,8 +139,9 @@ export default function RegisterShopPage() {
 
             toast.success("Shop registered successfully! 🎉")
             router.push("/dashboard")
-        } catch (error: any) {
-            toast.error("Failed to register shop. Please try again.")
+        } catch (error) {
+            if (error instanceof Error)
+                toast.error(error.message || "Failed to register shop. Please try again.")
         } finally {
             setLoading(false)
         }
@@ -250,7 +251,7 @@ export default function RegisterShopPage() {
                                     {/* Address Search */}
                                     <div className="space-y-3">
                                         <Label htmlFor="addressSearch" className="text-base text-slate-600 font-semibold">
-                                            🔍 Search for your shop address (e.g., "Tariq Road Karachi" or "Times Square New York")
+                                            🔍 Search for your shop address (e.g., &quot;Tariq Road Karachi&quot; or &quot;Times Square New York&quot;)
                                         </Label>
                                         <AddressSearch
                                             onLocationSelect={handleAddressSelect}
@@ -313,7 +314,7 @@ export default function RegisterShopPage() {
                                         <ul className="text-sm text-blue-700 space-y-1">
                                             <li>• The map automatically updates when you search for an address above</li>
                                             <li>• You can also click directly on the map to set your location</li>
-                                            <li>• Use the "Get Location" button to use your current GPS location</li>
+                                            <li>• Use the &quot;Get Location&quot; button to use your current GPS location</li>
                                         </ul>
                                     </div>
                                     <MapComponent
@@ -342,7 +343,7 @@ export default function RegisterShopPage() {
                                                 ⚠️ Location Required
                                             </p>
                                             <p className="text-sm text-yellow-600 mt-2">
-                                                Please search for an address above or click on the map to select your shop's location
+                                                Please search for an address above or click on the map to select your shop&apos;s location
                                             </p>
                                         </div>
                                     )}
