@@ -11,6 +11,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Badge } from "@/components/ui/badge"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { MapComponent } from "@/components/map-component"
+import firebase from "firebase/compat/app"
 import { toast } from "sonner"
 import {
     Store,
@@ -27,6 +28,7 @@ import {
 } from "lucide-react"
 import { MapLegend } from "@/components/map-legend"
 import Link from "next/link"
+import Image from "next/image"
 
 interface Shop {
     id: string
@@ -40,7 +42,7 @@ interface Shop {
     }
     imageUrl?: string
     taxStatus: "paid" | "unpaid"
-    createdAt: any
+    createdAt: firebase.firestore.Timestamp
     userId: string
 }
 
@@ -53,7 +55,7 @@ interface User {
     countryName: string
     city?: string
     status: string
-    createdAt: any
+    createdAt: firebase.firestore.Timestamp;
 }
 
 export default function AdminPage() {
@@ -115,7 +117,8 @@ export default function AdminPage() {
             setShops(shops.map((shop) => (shop.id === shopId ? { ...shop, taxStatus: newStatus } : shop)))
             toast.success(`Tax status updated to ${newStatus}`)
         } catch (error) {
-            toast.error("Failed to update tax status")
+            if (error instanceof Error)
+                toast.error(error.message || "Failed to update tax status")
         } finally {
             setUpdatingTax(null)
         }
@@ -129,7 +132,8 @@ export default function AdminPage() {
             setShops(shops.filter((shop) => shop.id !== shopId))
             toast.success("Shop deleted successfully")
         } catch (error) {
-            toast.error("Failed to delete shop")
+            if (error instanceof Error)
+                toast.error(error.message || "Failed to delete shop")
         }
     }
 
@@ -153,7 +157,6 @@ export default function AdminPage() {
 
     const paidShops = shops.filter((shop) => shop.taxStatus === "paid").length
     const unpaidShops = shops.filter((shop) => shop.taxStatus === "unpaid").length
-    const activeUsers = users.filter((user) => user.status === "active").length
     const complianceRate = shops.length > 0 ? Math.round((paidShops / shops.length) * 100) : 0
 
     return (
@@ -198,7 +201,7 @@ export default function AdminPage() {
                     ].map((tab) => (
                         <button
                             key={tab.id}
-                            onClick={() => setActiveTab(tab.id as any)}
+                            onClick={() => setActiveTab(tab.id as "overview" | "shops" | "users")}
                             className={`flex items-center space-x-3 px-8 py-4 rounded-xl font-bold transition-all text-lg ${activeTab === tab.id
                                 ? "bg-gradient-to-r from-blue-600 to-indigo-700 text-white shadow-lg"
                                 : "text-slate-600 hover:text-slate-800 hover:bg-slate-50"
@@ -326,10 +329,12 @@ export default function AdminPage() {
                                                     <TableCell>
                                                         <div className="flex items-center space-x-4">
                                                             {shop.imageUrl && (
-                                                                <img
+                                                                <Image
                                                                     src={shop.imageUrl || "/placeholder.svg"}
                                                                     alt={shop.shopName}
                                                                     className="w-16 h-16 rounded-xl object-cover shadow-md"
+                                                                    width={500}
+                                                                    height={500}
                                                                 />
                                                             )}
                                                             <div>
