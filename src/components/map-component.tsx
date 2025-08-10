@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button"
 import { MapPin, Navigation, Loader2 } from "lucide-react"
 import { toast } from "sonner"
 import { useMapEvents } from "react-leaflet"
+import { DivIcon } from "leaflet"
 // Dynamically import React Leaflet components to avoid SSR issues
 const MapContainer = dynamic(() => import("react-leaflet").then((mod) => mod.MapContainer), { ssr: false })
 const TileLayer = dynamic(() => import("react-leaflet").then((mod) => mod.TileLayer), { ssr: false })
@@ -31,6 +32,12 @@ interface MapComponentProps {
   showCurrentLocation?: boolean
 }
 
+interface CustomIcons {
+  greenIcon: DivIcon
+  redIcon: DivIcon
+  currentLocationIcon: DivIcon
+}
+
 // Component to handle map clicks
 function LocationMarker({
   onLocationSelect,
@@ -50,7 +57,7 @@ function LocationMarker({
       }
     },
   })
-
+  console.log(map)
   return (
     <>
       {position && (
@@ -94,7 +101,7 @@ export function MapComponent({
   const [currentLocation, setCurrentLocation] = useState<{ lat: number; lng: number } | null>(null)
   const [gettingLocation, setGettingLocation] = useState(false)
   const [leafletLoaded, setLeafletLoaded] = useState(false)
-  const [customIcons, setCustomIcons] = useState<any>(null)
+  const [customIcons, setCustomIcons] = useState<CustomIcons | null>(null)
 
   useEffect(() => {
     setIsClient(true)
@@ -104,7 +111,7 @@ export function MapComponent({
       import("leaflet/dist/leaflet.css")
       import("leaflet").then((L) => {
         // Fix for default markers in Leaflet
-        delete (L.Icon.Default.prototype as any)._getIconUrl
+        delete (L.Icon.Default.prototype)._getIconUrl
         L.Icon.Default.mergeOptions({
           iconRetinaUrl: "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon-2x.png",
           iconUrl: "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon.png",

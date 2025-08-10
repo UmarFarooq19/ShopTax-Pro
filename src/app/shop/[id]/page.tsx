@@ -11,7 +11,8 @@ import { Badge } from "@/components/ui/badge"
 import { MapComponent } from "@/components/map-component"
 import { ArrowLeft, Store, User, Phone, MapPin, Calendar, Building2, Globe } from 'lucide-react'
 import Link from "next/link"
-
+import firebase from "firebase/compat/app"
+import Image from "next/image"
 interface Shop {
     id: string
     shopName: string
@@ -24,8 +25,8 @@ interface Shop {
     }
     imageUrl?: string
     taxStatus: "paid" | "unpaid"
-    createdAt: any
-    updatedAt?: any
+    createdAt: firebase.firestore.Timestamp
+    updatedAt?: firebase.firestore.Timestamp
     userId: string
     userCountry?: string
     userCountryName?: string
@@ -88,7 +89,7 @@ export default function ShopDetailsPage() {
                         <Store className="h-12 w-12 text-gray-400" />
                     </div>
                     <h2 className="text-2xl font-bold text-gray-900 mb-4">Shop not found</h2>
-                    <p className="text-gray-600 mb-6">The shop you're looking for doesn't exist or you don't have access to it.</p>
+                    <p className="text-gray-600 mb-6">The shop you&apos;re looking for doesn&apos;t exist or you don&apos;t have access to it.</p>
                     <Button asChild className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white">
                         <Link href="/dashboard">Back to Dashboard</Link>
                     </Button>
@@ -148,10 +149,12 @@ export default function ShopDetailsPage() {
                             <CardContent className="p-6 space-y-6">
                                 {shop.imageUrl && (
                                     <div className="aspect-video rounded-xl overflow-hidden shadow-md bg-gray-100">
-                                        <img
+                                        <Image
                                             src={shop.imageUrl || "/placeholder.svg"}
                                             alt={shop.shopName}
                                             className="w-full h-full object-cover"
+                                            width={500}
+                                            height={500}
                                         />
                                     </div>
                                 )}
