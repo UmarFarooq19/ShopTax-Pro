@@ -25,7 +25,8 @@ import Link from "next/link"
 import { signOut } from "firebase/auth"
 import { auth } from "@/lib/firebase"
 import { toast } from "sonner"
-
+import firebase from "firebase/compat/app"
+import Image from "next/image"
 interface Shop {
     id: string
     shopName: string
@@ -38,7 +39,7 @@ interface Shop {
     }
     imageUrl?: string
     taxStatus: "paid" | "unpaid"
-    createdAt: any
+    createdAt: firebase.firestore.Timestamp;
 }
 
 export default function DashboardPage() {
@@ -237,10 +238,12 @@ export default function DashboardPage() {
                             >
                                 {shop.imageUrl && (
                                     <div className="h-56 bg-gradient-to-br from-slate-100 to-slate-200 rounded-t-2xl overflow-hidden">
-                                        <img
+                                        <Image
                                             src={shop.imageUrl || "/placeholder.svg"}
                                             alt={shop.shopName}
                                             className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
+                                            width={500}
+                                            height={500}
                                         />
                                     </div>
                                 )}
