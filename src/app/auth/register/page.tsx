@@ -246,6 +246,7 @@ export default function RegisterPage() {
             </div>
           </CardHeader>
           <CardContent>
+            {/* Register Form */}
             <form onSubmit={handleRegister} className="space-y-5">
               <div className="space-y-2">
                 <Label htmlFor="fullName" className="text-sm font-semibold text-gray-700">
