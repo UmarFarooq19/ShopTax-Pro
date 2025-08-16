@@ -133,7 +133,7 @@ export default function LoginPage() {
                                 </div>
                             </div>
                         )}
-
+                        {/* Login Form */}
                         <form onSubmit={handleLogin} className="space-y-5">
                             <div className="space-y-2">
                                 <Label htmlFor="email" className="text-sm font-semibold text-gray-700 flex items-center">
