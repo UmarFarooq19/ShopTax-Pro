@@ -199,7 +199,7 @@ export default function DashboardPage() {
                         </Link>
                     </Button>
                 </div>
-
+                {/* When loading show this */}
                 {loadingShops ? (
                     <div className="flex justify-center py-24">
                         <div className="text-center">
