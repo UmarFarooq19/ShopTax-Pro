@@ -336,6 +336,7 @@ export default function RegisterShopPage() {
                                             </p>
                                         </div>
                                     )}
+                                    {/* If there is no location show this */}
                                     {!location && (
                                         <div className="p-6 bg-gradient-to-r from-yellow-50 to-orange-50 border-2 border-yellow-200 rounded-2xl shadow-lg">
                                             <p className="text-lg text-yellow-700 font-bold flex items-center">
