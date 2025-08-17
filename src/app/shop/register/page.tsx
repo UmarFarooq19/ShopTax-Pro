@@ -317,6 +317,7 @@ export default function RegisterShopPage() {
                                             <li>• Use the &quot;Get Location&quot; button to use your current GPS location</li>
                                         </ul>
                                     </div>
+                                    {/* Map */}
                                     <MapComponent
                                         onLocationSelect={setLocation}
                                         selectedLocation={location}
