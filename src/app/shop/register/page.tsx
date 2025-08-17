@@ -194,6 +194,7 @@ export default function RegisterShopPage() {
                             </div>
                         </CardHeader>
                         <CardContent className="p-10">
+                            {/* Form for register shop */}
                             <form onSubmit={handleSubmit} className="space-y-10">
                                 <div className="grid md:grid-cols-2 gap-8">
                                     <div className="space-y-3">
