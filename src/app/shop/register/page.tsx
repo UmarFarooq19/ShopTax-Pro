@@ -1,35 +1,35 @@
 "use client"
 
-import type React from "react"
-import { useState, useEffect } from "react"
+import { AddressSearch } from "@/components/address-search"
 import { useAuth } from "@/components/auth-provider"
-import { useRouter } from "next/navigation"
-import { collection, addDoc } from "firebase/firestore"
-import { ref, uploadBytes, getDownloadURL } from "firebase/storage"
-import { db, storage } from "@/lib/firebase"
+import { MapComponent } from "@/components/map-component"
 import { Button } from "@/components/ui/button"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { toast } from "sonner"
-import { MapComponent } from "@/components/map-component"
-import { AddressSearch } from "@/components/address-search"
+import { db, storage } from "@/lib/firebase"
+import { addDoc, collection } from "firebase/firestore"
+import { getDownloadURL, ref, uploadBytes } from "firebase/storage"
 import {
     ArrowLeft,
-    Upload,
-    Store,
-    User,
-    Phone,
-    MapPin,
-    Camera,
     Building2,
-    Loader2,
+    Camera,
     CheckCircle,
-    Receipt,
     DollarSign,
+    Loader2,
+    MapPin,
+    Phone,
+    Receipt,
+    Store,
+    Upload,
+    User,
 } from "lucide-react"
 import Link from "next/link"
+import { useRouter } from "next/navigation"
+import type React from "react"
+import { useState } from "react"
+import { toast } from "sonner"
 
 export default function RegisterShopPage() {
     const { user, userRole } = useAuth()
@@ -50,13 +50,6 @@ export default function RegisterShopPage() {
     const [mapZoom, setMapZoom] = useState(12)
     const [addressSearchValue, setAddressSearchValue] = useState("")
 
-    useEffect(() => {
-        // Only allow admin access
-        if (user && userRole !== "admin") {
-            router.push("/auth/login")
-            return
-        }
-    }, [user, userRole, router])
 
     const handleAddressSelect = (addressData: { lat: number; lng: number; address: string }) => {
         setLocation({ lat: addressData.lat, lng: addressData.lng })

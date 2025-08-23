@@ -83,7 +83,7 @@ export default function AdminLoginPage() {
         <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-blue-50 relative overflow-hidden">
 
             <div className="flex items-center justify-center px-4">
-                <div className="w-full max-w-xl animate-fade-in-up">
+                <div className="w-full max-w-xl">
                     <Card className="shadow-2xl border-0 backdrop-blur-sm bg-white/95 card-hover">
                         <CardHeader className="text-center space-y-6 pb-8">
                             <div className="mx-auto w-20 h-20 bg-gradient-to-br from-blue-600 to-indigo-700 rounded-3xl flex items-center justify-center shadow-xl animate-float">
