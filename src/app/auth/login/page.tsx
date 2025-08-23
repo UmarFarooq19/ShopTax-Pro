@@ -11,16 +11,15 @@ import { Label } from "@/components/ui/label"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { toast } from "sonner"
 import Link from "next/link"
-import { Building2, Mail, Lock, AlertCircle, RefreshCw } from "lucide-react";
-import type { AuthError, User as FirebaseUser } from "firebase/auth"
+import { Shield, Mail, Lock, AlertCircle, RefreshCw } from "lucide-react"
 
-export default function LoginPage() {
+export default function AdminLoginPage() {
     const [email, setEmail] = useState("")
     const [password, setPassword] = useState("")
     const [loading, setLoading] = useState(false)
     const [sendingVerification, setSendingVerification] = useState(false)
     const [showVerificationPrompt, setShowVerificationPrompt] = useState(false)
-    const [unverifiedUser, setUnverifiedUser] = useState<FirebaseUser | null>(null)
+    const [unverifiedUser, setUnverifiedUser] = useState<any>(null)
     const router = useRouter()
 
     const handleLogin = async (e: React.FormEvent) => {
@@ -38,26 +37,23 @@ export default function LoginPage() {
                 await auth.signOut()
                 setUnverifiedUser(user)
                 setShowVerificationPrompt(true)
-                toast.error("Please verify your email address before logging in.")
+                toast.error("Please verify your email address before accessing the admin panel.")
                 setLoading(false)
                 return
             }
-
-            toast.success("Welcome back! Logged in successfully")
-            router.push("/dashboard")
-        } catch (error: unknown) {
-            const authError = error as AuthError
+            router.push("/admin")
+        } catch (error: any) {
             console.error("Login error:", error)
-            if (authError.code === "auth/user-not-found") {
-                toast.error("No account found with this email address.")
-            } else if (authError.code === "auth/wrong-password") {
+            if (error.code === "auth/user-not-found") {
+                toast.error("No admin account found with this email address.")
+            } else if (error.code === "auth/wrong-password") {
                 toast.error("Incorrect password. Please try again.")
-            } else if (authError.code === "auth/invalid-email") {
+            } else if (error.code === "auth/invalid-email") {
                 toast.error("Please enter a valid email address.")
-            } else if (authError.code === "auth/too-many-requests") {
+            } else if (error.code === "auth/too-many-requests") {
                 toast.error("Too many failed attempts. Please try again later.")
             } else {
-                toast.error("Invalid email or password. Please try again.")
+                toast.error("Invalid admin credentials. Please try again.")
             }
         } finally {
             setLoading(false)
@@ -71,10 +67,9 @@ export default function LoginPage() {
         try {
             await sendEmailVerification(unverifiedUser)
             toast.success("Verification email sent! Please check your inbox and spam folder.")
-        } catch (error: unknown) {
-            const authError = error as AuthError
+        } catch (error: any) {
             console.error("Verification email error:", error)
-            if (authError.code === "auth/too-many-requests") {
+            if (error.code === "auth/too-many-requests") {
                 toast.error("Too many requests. Please wait before requesting another verification email.")
             } else {
                 toast.error("Failed to send verification email. Please try again.")
@@ -85,120 +80,129 @@ export default function LoginPage() {
     }
 
     return (
-        <div className="min-h-screen flex items-center justify-center px-4">
-            <div className="w-full max-w-md animate-fade-in-up">
-                <Card className="shadow-2xl border-0 backdrop-blur-sm bg-white/95">
-                    <CardHeader className="text-center space-y-4 pb-8">
-                        <div className="mx-auto w-16 h-16 bg-gradient-to-br from-blue-500 to-purple-600 rounded-2xl flex items-center justify-center">
-                            <Building2 className="h-8 w-8 text-white" />
-                        </div>
-                        <div>
-                            <CardTitle className="text-3xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
-                                Welcome Back
-                            </CardTitle>
-                            <CardDescription className="text-gray-600 mt-2">Sign in to your ShopTax Pro account</CardDescription>
-                        </div>
-                    </CardHeader>
-                    <CardContent>
-                        {/* Email Verification Prompt */}
-                        {showVerificationPrompt && (
-                            <div className="mb-6 p-4 bg-gradient-to-r from-yellow-50 to-orange-50 border border-yellow-200 rounded-lg">
-                                <div className="flex items-start space-x-3">
-                                    <AlertCircle className="h-5 w-5 text-yellow-600 mt-0.5" />
-                                    <div className="flex-1">
-                                        <h3 className="font-semibold text-yellow-800 mb-1">Email Verification Required</h3>
-                                        <p className="text-sm text-yellow-700 mb-3">
-                                            Your account exists but your email address hasn&apos;t been verified yet. Please check your email and
-                                            click the verification link, or request a new one below.
-                                        </p>
-                                        <Button
-                                            onClick={handleResendVerification}
-                                            disabled={sendingVerification}
-                                            size="sm"
-                                            className="bg-yellow-600 hover:bg-yellow-700 text-white font-semibold"
-                                        >
-                                            {sendingVerification ? (
-                                                <>
-                                                    <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
-                                                    Sending...
-                                                </>
-                                            ) : (
-                                                <>
-                                                    <RefreshCw className="h-4 w-4 mr-2" />
-                                                    Resend Verification Email
-                                                </>
-                                            )}
-                                        </Button>
+        <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-blue-50 relative overflow-hidden">
+
+            <div className="flex items-center justify-center px-4">
+                <div className="w-full max-w-xl">
+                    <Card className="shadow-2xl border-0 backdrop-blur-sm bg-white/95 card-hover">
+                        <CardHeader className="text-center space-y-6 pb-8">
+                            <div className="mx-auto w-20 h-20 bg-gradient-to-br from-blue-600 to-indigo-700 rounded-3xl flex items-center justify-center shadow-xl animate-float">
+                                <Shield className="h-10 w-10 text-white" />
+                            </div>
+                            <div>
+                                <CardTitle className="text-4xl font-bold text-gradient-primary mb-2">Admin Access</CardTitle>
+                                <CardDescription className="text-slate-600 text-lg">
+                                    Sign in to ShopTax Pro Administrative Panel
+                                </CardDescription>
+                            </div>
+                        </CardHeader>
+                        <CardContent className="px-8 pb-8">
+                            {/* Email Verification Prompt */}
+                            {showVerificationPrompt && (
+                                <div className="mb-8 p-6 bg-gradient-to-r from-yellow-50 to-orange-50 border-2 border-yellow-200 rounded-2xl shadow-lg">
+                                    <div className="flex items-start space-x-4">
+                                        <div className="w-12 h-12 bg-yellow-100 rounded-full flex items-center justify-center flex-shrink-0">
+                                            <AlertCircle className="h-6 w-6 text-yellow-600" />
+                                        </div>
+                                        <div className="flex-1">
+                                            <h3 className="font-bold text-yellow-800 text-lg mb-2">Email Verification Required</h3>
+                                            <p className="text-yellow-700 mb-4 leading-relaxed">
+                                                Your admin account exists but your email address hasn't been verified yet. Please check your
+                                                email and click the verification link, or request a new one below.
+                                            </p>
+                                            <Button
+                                                onClick={handleResendVerification}
+                                                disabled={sendingVerification}
+                                                className="bg-yellow-600 hover:bg-yellow-700 text-white font-semibold shadow-lg hover:shadow-xl transition-all"
+                                            >
+                                                {sendingVerification ? (
+                                                    <>
+                                                        <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
+                                                        Sending...
+                                                    </>
+                                                ) : (
+                                                    <>
+                                                        <RefreshCw className="h-4 w-4 mr-2" />
+                                                        Resend Verification Email
+                                                    </>
+                                                )}
+                                            </Button>
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
-                        )}
-                        {/* Login Form */}
-                        <form onSubmit={handleLogin} className="space-y-5">
-                            <div className="space-y-2">
-                                <Label htmlFor="email" className="text-sm font-semibold text-gray-700 flex items-center">
-                                    <Mail className="h-4 w-4 mr-1" />
-                                    Email Address
-                                </Label>
-                                <Input
-                                    id="email"
-                                    type="email"
-                                    placeholder="Enter your email"
-                                    value={email}
-                                    onChange={(e) => setEmail(e.target.value)}
-                                    className="h-12 border-gray-200 focus:border-blue-500 focus:ring-blue-500"
-                                    required
-                                />
-                            </div>
-                            <div className="space-y-2">
-                                <Label htmlFor="password" className="text-sm font-semibold text-gray-700 flex items-center">
-                                    <Lock className="h-4 w-4 mr-1" />
-                                    Password
-                                </Label>
-                                <Input
-                                    id="password"
-                                    type="password"
-                                    placeholder="Enter your password"
-                                    value={password}
-                                    onChange={(e) => setPassword(e.target.value)}
-                                    className="h-12 border-gray-200 focus:border-blue-500 focus:ring-blue-500"
-                                    required
-                                />
-                            </div>
-                            <Button
-                                type="submit"
-                                className="w-full h-12 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-semibold rounded-xl shadow-lg hover:shadow-xl transition-all duration-200"
-                                disabled={loading}
-                            >
-                                {loading ? (
-                                    <div className="flex items-center">
-                                        <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white mr-2"></div>
-                                        Signing In...
-                                    </div>
-                                ) : (
-                                    "Sign In"
-                                )}
-                            </Button>
-                        </form>
+                            )}
 
-                        {/* Security Notice */}
-                        <div className="mt-6 p-3 bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200 rounded-lg">
-                            <div className="flex items-center space-x-2">
-                                <Lock className="h-4 w-4 text-blue-600" />
-                                <p className="text-xs text-blue-700 font-medium">
-                                    For security, only verified email addresses can access the system.
-                                </p>
-                            </div>
-                        </div>
+                            <form onSubmit={handleLogin} className="space-y-6">
+                                <div className="space-y-3">
+                                    <Label htmlFor="email" className="text-lg font-bold text-slate-700 flex items-center">
+                                        <Mail className="h-5 w-5 mr-3 text-blue-600" />
+                                        Admin Email Address
+                                    </Label>
+                                    <Input
+                                        id="email"
+                                        type="email"
+                                        placeholder="Enter your admin email"
+                                        value={email}
+                                        onChange={(e) => setEmail(e.target.value)}
+                                        className="h-14 border-2 border-slate-200 focus:border-blue-500 focus:ring-blue-500 rounded-xl text-lg shadow-lg"
+                                        required
+                                    />
+                                </div>
+                                <div className="space-y-3">
+                                    <Label htmlFor="password" className="text-lg font-bold text-slate-700 flex items-center">
+                                        <Lock className="h-5 w-5 mr-3 text-blue-600" />
+                                        Admin Password
+                                    </Label>
+                                    <Input
+                                        id="password"
+                                        type="password"
+                                        placeholder="Enter your admin password"
+                                        value={password}
+                                        onChange={(e) => setPassword(e.target.value)}
+                                        className="h-14 border-2 border-slate-200 focus:border-blue-500 focus:ring-blue-500 rounded-xl text-lg shadow-lg"
+                                        required
+                                    />
+                                </div>
+                                <Button
+                                    type="submit"
+                                    className="w-full h-16 btn-primary rounded-xl text-xl font-bold"
+                                    disabled={loading}
+                                >
+                                    {loading ? (
+                                        <div className="flex items-center">
+                                            <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-white mr-3"></div>
+                                            Accessing Admin Panel...
+                                        </div>
+                                    ) : (
+                                        <>
+                                            <Shield className="h-6 w-6 mr-3" />
+                                            Access Admin Panel
+                                        </>
+                                    )}
+                                </Button>
+                            </form>
 
-                        <div className="mt-6 text-center text-sm">
-                            <span className="text-gray-600">Don&apos;t have an account? </span>
-                            <Link href="/auth/register" className="text-blue-600 hover:text-blue-700 font-semibold hover:underline">
-                                Create one here
-                            </Link>
-                        </div>
-                    </CardContent>
-                </Card>
+                            {/* Security Notice */}
+                            <div className="mt-8 p-4 bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200 rounded-xl">
+                                <div className="flex items-center space-x-3">
+                                    <Shield className="h-5 w-5 text-blue-600" />
+                                    <p className="text-sm text-blue-700 font-medium">
+                                        This system is restricted to authorized administrative personnel only.
+                                    </p>
+                                </div>
+                            </div>
+
+                            <div className="mt-8 text-center">
+                                <Link
+                                    href="/"
+                                    className="text-blue-600 hover:text-blue-700 font-bold hover:underline transition-colors text-lg"
+                                >
+                                    ← Back to Home
+                                </Link>
+                            </div>
+                        </CardContent>
+                    </Card>
+                </div>
             </div>
         </div>
     )
