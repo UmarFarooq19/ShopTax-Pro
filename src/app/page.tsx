@@ -134,7 +134,7 @@ export default function HomePage() {
       </section>
 
       {/* Features Section */}
-      <section className="py-24 bg-white">
+      <section className="py-24 lg:px-8 xl:px-16 bg-white">
         <div className="container mx-auto px-4">
           <div className="text-center mb-20">
             <h2 className="text-5xl font-bold text-slate-900 mb-6">Administrative Features</h2>
@@ -190,7 +190,7 @@ export default function HomePage() {
       </section>
 
       {/* Benefits Section */}
-      <section className="py-24 bg-gradient-to-br from-slate-50 to-blue-50">
+      <section className="py-24 lg:px-8 xl:px-16 bg-gradient-to-br from-slate-50 to-blue-50">
         <div className="container mx-auto px-4">
           <div className="grid lg:grid-cols-2 gap-20 items-center">
             <div>
