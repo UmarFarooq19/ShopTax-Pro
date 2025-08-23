@@ -80,7 +80,7 @@ export default function AdminLoginPage() {
     }
 
     return (
-        <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-blue-50 relative overflow-hidden">
+        <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-blue-50 relative overflow-hidden pt-6">
 
             <div className="flex items-center justify-center px-4">
                 <div className="w-full max-w-xl">
