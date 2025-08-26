@@ -37,7 +37,7 @@ import {
 } from "lucide-react"
 import Link from "next/link"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
-
+import firebase from "firebase/compat/app"
 interface Shop {
     id: string
     shopName: string
@@ -52,8 +52,8 @@ interface Shop {
     challanAmount?: number
     challanImageUrl?: string
     taxStatus: "paid" | "unpaid"
-    createdAt: any
-    updatedAt?: any
+    createdAt: firebase.firestore.Timestamp
+    updatedAt?: firebase.firestore.Timestamp
     registeredBy?: string
     registeredByEmail?: string
     userCountry?: string
@@ -113,7 +113,8 @@ export default function AdminShopDetailsPage() {
             setShop({ ...shop, taxStatus: newStatus })
             toast.success(`Tax status updated to ${newStatus}`)
         } catch (error) {
-            toast.error("Failed to update tax status")
+            if (error instanceof Error)
+                toast.error(error.message || "Failed to update tax status")
         } finally {
             setUpdating(false)
         }
@@ -134,8 +135,10 @@ export default function AdminShopDetailsPage() {
             toast.success("Business deleted successfully")
             router.push("/admin")
         } catch (error) {
-            toast.error("Failed to delete business")
-            setDeleting(false)
+            if (error instanceof Error) {
+                toast.error(error.message || "Failed to delete business")
+                setDeleting(false)
+            }
         }
     }
 
@@ -151,7 +154,7 @@ export default function AdminShopDetailsPage() {
         }
     }
 
-    const viewFullImage = (imageUrl: string, title: string) => {
+    const viewFullImage = (imageUrl: string) => {
         window.open(imageUrl, "_blank", "width=800,height=600,scrollbars=yes,resizable=yes")
     }
 
@@ -321,8 +324,8 @@ export default function AdminShopDetailsPage() {
                                 <Badge
                                     variant={shop.taxStatus === "paid" ? "default" : "destructive"}
                                     className={`${shop.taxStatus === "paid"
-                                            ? "bg-green-500 hover:bg-green-600 text-white border-green-400"
-                                            : "bg-red-500 hover:bg-red-600 text-white border-red-400"
+                                        ? "bg-green-500 hover:bg-green-600 text-white border-green-400"
+                                        : "bg-red-500 hover:bg-red-600 text-white border-red-400"
                                         } text-sm lg:text-base px-3 lg:px-4 py-1 cursor-pointer lg:py-2 font-semibold shadow-lg border`}
                                 >
                                     {shop.taxStatus === "paid" ? "✅ Tax Paid" : "❌ Tax Pending"}
@@ -562,8 +565,8 @@ export default function AdminShopDetailsPage() {
                                         <Badge
                                             variant={shop.taxStatus === "paid" ? "default" : "destructive"}
                                             className={`${shop.taxStatus === "paid"
-                                                    ? "bg-green-100 text-green-800 border-green-200"
-                                                    : "bg-red-100 text-red-800 border-red-200"
+                                                ? "bg-green-100 text-green-800 border-green-200"
+                                                : "bg-red-100 text-red-800 border-red-200"
                                                 } font-semibold border`}
                                         >
                                             {shop.taxStatus === "paid" ? "✅ Paid" : "❌ Unpaid"}

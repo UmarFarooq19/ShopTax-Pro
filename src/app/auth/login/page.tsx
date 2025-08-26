@@ -3,7 +3,7 @@
 import type React from "react"
 import { useState } from "react"
 import { useRouter } from "next/navigation"
-import { signInWithEmailAndPassword, sendEmailVerification } from "firebase/auth"
+import { signInWithEmailAndPassword, sendEmailVerification, User, AuthError } from "firebase/auth"
 import { auth } from "@/lib/firebase"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -19,7 +19,7 @@ export default function AdminLoginPage() {
     const [loading, setLoading] = useState(false)
     const [sendingVerification, setSendingVerification] = useState(false)
     const [showVerificationPrompt, setShowVerificationPrompt] = useState(false)
-    const [unverifiedUser, setUnverifiedUser] = useState<any>(null)
+    const [unverifiedUser, setUnverifiedUser] = useState<User | null>(null)
     const router = useRouter()
 
     const handleLogin = async (e: React.FormEvent) => {
@@ -42,15 +42,16 @@ export default function AdminLoginPage() {
                 return
             }
             router.push("/admin")
-        } catch (error: any) {
+        } catch (error) {
+            const authError = error as AuthError
             console.error("Login error:", error)
-            if (error.code === "auth/user-not-found") {
+            if (authError.code === "auth/user-not-found") {
                 toast.error("No admin account found with this email address.")
-            } else if (error.code === "auth/wrong-password") {
+            } else if (authError.code === "auth/wrong-password") {
                 toast.error("Incorrect password. Please try again.")
-            } else if (error.code === "auth/invalid-email") {
+            } else if (authError.code === "auth/invalid-email") {
                 toast.error("Please enter a valid email address.")
-            } else if (error.code === "auth/too-many-requests") {
+            } else if (authError.code === "auth/too-many-requests") {
                 toast.error("Too many failed attempts. Please try again later.")
             } else {
                 toast.error("Invalid admin credentials. Please try again.")
