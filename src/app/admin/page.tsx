@@ -181,7 +181,7 @@ export default function AdminPage() {
                             <Button
                                 onClick={handleLogout}
                                 variant="outline"
-                                className="hover:bg-red-50 hover:text-red-600 hover:border-red-200 h-12 px-6 font-semibold bg-transparent"
+                                className="hover:bg-red-50 hover:text-red-600 hover:border-red-200 h-12 px-6 font-semibold bg-transparent cursor-pointer"
                             >
                                 <LogOut className="h-5 w-5 mr-2" />
                                 Logout
@@ -204,7 +204,7 @@ export default function AdminPage() {
                             onClick={() => setActiveTab(tab.id as "overview" | "shops" | "users")}
                             className={`flex items-center space-x-3 px-8 py-4 rounded-xl font-bold transition-all text-lg ${activeTab === tab.id
                                 ? "bg-gradient-to-r from-blue-600 to-indigo-700 text-white shadow-lg"
-                                : "text-slate-600 hover:text-slate-800 hover:bg-slate-50"
+                                : "text-slate-600 hover:text-slate-800 hover:bg-slate-50 cursor-pointer"
                                 }`}
                         >
                             <tab.icon className="h-5 w-5" />
@@ -369,7 +369,7 @@ export default function AdminPage() {
                                                                 variant={shop.taxStatus === "paid" ? "outline" : "default"}
                                                                 onClick={() => updateTaxStatus(shop.id, "paid")}
                                                                 disabled={updatingTax === shop.id || shop.taxStatus === "paid"}
-                                                                className="bg-emerald-600 hover:bg-emerald-700 text-white font-semibold"
+                                                                className="bg-emerald-600 hover:bg-emerald-700 text-white font-semibold cursor-pointer"
                                                             >
                                                                 {updatingTax === shop.id ? <Loader2 className="h-3 w-3 animate-spin" /> : "Mark Paid"}
                                                             </Button>
@@ -378,7 +378,7 @@ export default function AdminPage() {
                                                                 variant={shop.taxStatus === "unpaid" ? "outline" : "destructive"}
                                                                 onClick={() => updateTaxStatus(shop.id, "unpaid")}
                                                                 disabled={updatingTax === shop.id || shop.taxStatus === "unpaid"}
-                                                                className="font-semibold"
+                                                                className="font-semibold cursor-pointer"
                                                             >
                                                                 {updatingTax === shop.id ? <Loader2 className="h-3 w-3 animate-spin" /> : "Mark Unpaid"}
                                                             </Button>
