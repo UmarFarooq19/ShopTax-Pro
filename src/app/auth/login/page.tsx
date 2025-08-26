@@ -42,20 +42,8 @@ export default function AdminLoginPage() {
                 return
             }
             router.push("/admin")
-        } catch (error: unknown) {
-            const authError = error as AuthError
-            console.error("Login error:", error)
-            if (authError.code === "auth/user-not-found") {
-                toast.error("No admin account found with this email address.")
-            } else if (authError.code === "auth/wrong-password") {
-                toast.error("Incorrect password. Please try again.")
-            } else if (authError.code === "auth/invalid-email") {
-                toast.error("Please enter a valid email address.")
-            } else if (authError.code === "auth/too-many-requests") {
-                toast.error("Too many failed attempts. Please try again later.")
-            } else {
-                toast.error("Invalid admin credentials. Please try again.")
-            }
+        } catch (error) {
+            if (error instanceof Error) toast.error(error.message || "Error Occured Please Check Your Credentials Or Verify Your Email")
         } finally {
             setLoading(false)
         }
