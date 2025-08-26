@@ -180,8 +180,8 @@ export default function RegisterShopPage() {
             <main className="container mx-auto px-4 py-12">
                 <div className="max-w-6xl mx-auto">
                     <Card className="shadow-2xl border-0 bg-white/95 backdrop-blur-sm card-hover">
-                        <CardHeader className="border-b border-slate-100 bg-gradient-to-r from-blue-50 via-indigo-50 to-purple-50 rounded-t-2xl mx-10">
-                            <div className="flex items-center space-x-6 my-auto">
+                        <CardHeader className="border-b border-slate-100 bg-gradient-to-r from-blue-50 via-indigo-50 to-purple-50 rounded-t-2xl mx-10 items-center pt-6">
+                            <div className="flex h-full items-center space-x-6 ">
                                 <div className="w-20 h-20 bg-gradient-to-br from-blue-100 to-indigo-100 rounded-3xl flex items-center justify-center shadow-xl">
                                     <Store className="h-10 w-10 text-blue-600" />
                                 </div>
