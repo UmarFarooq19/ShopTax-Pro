@@ -42,7 +42,7 @@ export default function AdminLoginPage() {
                 return
             }
             router.push("/admin")
-        } catch (error) {
+        } catch (error: unknown) {
             const authError = error as AuthError
             console.error("Login error:", error)
             if (authError.code === "auth/user-not-found") {
@@ -68,9 +68,10 @@ export default function AdminLoginPage() {
         try {
             await sendEmailVerification(unverifiedUser)
             toast.success("Verification email sent! Please check your inbox and spam folder.")
-        } catch (error: any) {
+        } catch (error: unknown) {
+            const authError = error as AuthError
             console.error("Verification email error:", error)
-            if (error.code === "auth/too-many-requests") {
+            if (authError.code === "auth/too-many-requests") {
                 toast.error("Too many requests. Please wait before requesting another verification email.")
             } else {
                 toast.error("Failed to send verification email. Please try again.")
@@ -108,7 +109,7 @@ export default function AdminLoginPage() {
                                         <div className="flex-1">
                                             <h3 className="font-bold text-yellow-800 text-lg mb-2">Email Verification Required</h3>
                                             <p className="text-yellow-700 mb-4 leading-relaxed">
-                                                Your admin account exists but your email address hasn't been verified yet. Please check your
+                                                Your admin account exists but your email address hasn&apos;t been verified yet. Please check your
                                                 email and click the verification link, or request a new one below.
                                             </p>
                                             <Button

@@ -367,7 +367,7 @@ export default function AdminShopDetailsPage() {
                                                         Business Photo
                                                     </h4>
                                                     <Button
-                                                        onClick={() => viewFullImage(shop.imageUrl!, "Business Photo")}
+                                                        onClick={() => viewFullImage(shop.imageUrl!)}
                                                         variant="outline"
                                                         size="sm"
                                                         className="text-blue-600 cursor-pointer border-blue-200 hover:bg-blue-50 bg-transparent"
@@ -397,7 +397,7 @@ export default function AdminShopDetailsPage() {
                                                     </h4>
                                                     <div className="flex space-x-2">
                                                         <Button
-                                                            onClick={() => viewFullImage(shop.challanImageUrl!, "Challan Receipt")}
+                                                            onClick={() => viewFullImage(shop.challanImageUrl!)}
                                                             variant="outline"
                                                             size="sm"
                                                             className="text-green-600 border-green-200 hover:bg-green-50 bg-transparent"

@@ -118,7 +118,7 @@ export default function RegisterShopPage() {
 
             toast.success("🎉 Shop registered successfully!")
             router.push("/admin")
-        } catch (error: any) {
+        } catch (error) {
             console.error("Registration error:", error)
             toast.error("Failed to register shop. Please try again.")
         } finally {
