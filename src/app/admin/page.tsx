@@ -70,7 +70,7 @@ export default function AdminPage() {
     useEffect(() => {
         if (!loading && (!user || userRole !== "admin")) {
             router.push("/auth/login")
-        } else if (user && userRole === "shop_owner") router.push("/dashboard")
+        } else if (user && userRole !== "admin") router.push("/login")
     }, [user, userRole, loading, router])
 
     useEffect(() => {
