@@ -205,6 +205,7 @@ export default function AdminRegisterPage() {
       setRegisteredEmail(formData.email)
       setShowSuccess(true)
 
+      // Success
       toast.success("Admin account created successfully! Please check your email to verify your account.")
     } catch (error: any) {
       console.error("Registration error:", error)
